@@ -71,5 +71,5 @@ target/
 *~
 *.swp
 
-datasets/
-gephi/
+coordinates/
+venv/

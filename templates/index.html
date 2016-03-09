@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block webglscript %}
+
+(function(){
+
+var width = 500;
+var height = 300;
+var sphere;
+var sphereSize = 300;
+var cells = {"MOp": [4606,2116,7167],
+            "SSp-bfd": [7118,1901,8586],
+            "MOs": [3122,2333,6498]
+};
+
+//scene
+var scene = new THREE.Scene();
+
+//mesh
+var i = 0;
+for (var key in cells){
+  var cell_name = key;
+  var x = cells[key][0];
+  var y = cells[key][1];
+  var z = cells[key][2];
+
+  var material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+
+  <!-- var textGeo = new THREE.TextGeometry( cell_name, { -->
+  <!--   size: 100, -->
+  <!--   height: 4, -->
+  <!--   curveSegments: 3, -->
+  <!--   font: "helvetiker", -->
+  <!--   weight: "bold", -->
+  <!--   style: "normal", -->
+  <!--   bevelThickness: 1, -->
+  <!--   bevelSize: 2, -->
+  <!--   bevelEnabled: true -->
+  <!-- }); -->
+  <!-- var text = new THREE.Mesh(textGeo, material); -->
+  <!-- text.position.set(x, y, z); -->
+  <!-- scene.add(text); -->
+
+  var geometry = new THREE.SphereGeometry(sphereSize);  
+  sphere = new THREE.Mesh(geometry, material);
+  sphere.position.set(x, y, z);
+  scene.add(sphere);
+}
+
+//light
+var light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(0, 0, 0);
+scene.add(light);
+var ambient = new THREE.AmbientLight(0x550000);
+scene.add(ambient);
+
+//camera
+var camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
+camera.position.set(3000, 3000, 3000);
+camera.lookAt(sphere.position);
+
+//helper
+var axis = new THREE.AxisHelper(1000);
+axis.position.set(0, 0, 0);
+scene.add(axis);
+
+//rendering
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize(width, height);
+renderer.setClearColor(0xeeeeee, 1);
+document.getElementById('stage').appendChild(renderer.domElement);
+
+//control
+var controls = new THREE.OrbitControls(camera, renderer.comElement);
+
+function render(){
+  requestAnimationFrame(render);
+  renderer.render(scene, camera);
+}
+
+render();
+
+
+})();
+
+{% endblock %}

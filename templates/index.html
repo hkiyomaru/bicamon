@@ -1,86 +1,255 @@
 {% extends "base.html" %}
 
+
 {% block webglscript %}
 
-(function(){
+if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
-var width = 500;
-var height = 300;
-var sphere;
-var sphereSize = 300;
-var cells = {"MOp": [4606,2116,7167],
-            "SSp-bfd": [7118,1901,8586],
-            "MOs": [3122,2333,6498]
-};
+THREE.Cache.enabled = true;
 
-//scene
-var scene = new THREE.Scene();
+var container, stats, controls, hex, color;
 
-//mesh
-var i = 0;
-for (var key in cells){
-  var cell_name = key;
-  var x = cells[key][0];
-  var y = cells[key][1];
-  var z = cells[key][2];
+var camera, cameraTarget, scene, renderer;
 
-  var material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+var group, textMesh, textGeo, material;
 
-  <!-- var textGeo = new THREE.TextGeometry( cell_name, { -->
-  <!--   size: 100, -->
-  <!--   height: 4, -->
-  <!--   curveSegments: 3, -->
-  <!--   font: "helvetiker", -->
-  <!--   weight: "bold", -->
-  <!--   style: "normal", -->
-  <!--   bevelThickness: 1, -->
-  <!--   bevelSize: 2, -->
-  <!--   bevelEnabled: true -->
-  <!-- }); -->
-  <!-- var text = new THREE.Mesh(textGeo, material); -->
-  <!-- text.position.set(x, y, z); -->
-  <!-- scene.add(text); -->
+var scale = 10;
 
-  var geometry = new THREE.SphereGeometry(sphereSize);  
-  sphere = new THREE.Mesh(geometry, material);
-  sphere.position.set(x, y, z);
-  scene.add(sphere);
+var sphereMeshes = [];
+var textMeshes = [];
+
+var firstLetter = true;
+
+var sphereSize = 30;
+
+var text,
+
+height = 1,
+size = 20,
+hover = 20,
+
+curveSegments = 4,
+
+bevelThickness = 2,
+bevelSize = 1.5,
+bevelSegments = 3,
+bevelEnabled = true,
+
+font = undefined;
+
+var mouseX = 0;
+var mouseXOnMouseDown = 0;
+
+var windowHalfX = window.innerWidth / 2;
+var windowHalfY = window.innerHeight / 2;
+
+init();
+animate();
+
+function decimalToHex( d ) {
+
+var hex = Number( d ).toString( 16 );
+hex = "000000".substr( 0, 6 - hex.length ) + hex;
+return hex.toUpperCase();
+
 }
 
-//light
-var light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(0, 0, 0);
-scene.add(light);
-var ambient = new THREE.AmbientLight(0x550000);
+function init() {
+
+container = document.createElement( 'div' );
+document.body.appendChild( container );
+
+// CAMERA
+
+camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
+camera.position.set( 0, 400, 700 );
+
+cameraTarget = new THREE.Vector3( 0, 150, 0 );
+camera.lookAt( cameraTarget );
+
+// SCENE
+
+scene = new THREE.Scene();
+scene.fog = new THREE.Fog( 0x161616, 250, 5000 );
+
+// LIGHTS
+
+var dirLight = new THREE.DirectionalLight( 0xffffff, 0.125 );
+dirLight.position.set( 0, 0, 1 ).normalize();
+scene.add( dirLight );
+
+var pointLight = new THREE.PointLight( 0xffffff, 1.5 );
+pointLight.position.set( 0, 100, 90 );
+scene.add( pointLight );
+
+var ambient = new THREE.AmbientLight(0x888888);
 scene.add(ambient);
 
-//camera
-var camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
-camera.position.set(3000, 3000, 3000);
-camera.lookAt(sphere.position);
+// SPHERE MATERIAL
 
-//helper
-var axis = new THREE.AxisHelper(1000);
-axis.position.set(0, 0, 0);
-scene.add(axis);
+smaterial = new THREE.MeshLambertMaterial({ color: 0xffff00 });
 
-//rendering
-var renderer = new THREE.WebGLRenderer();
-renderer.setSize(width, height);
-renderer.setClearColor(0xeeeeee, 1);
-document.getElementById('stage').appendChild(renderer.domElement);
+<!-- pointLight.color.setHSL( Math.random(), 1, 0.5 ); -->
+hex = decimalToHex( pointLight.color.getHex() );
 
-//control
-var controls = new THREE.OrbitControls(camera, renderer.comElement);
+material = new THREE.MultiMaterial( [
+new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading } ), // front
+new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.SmoothShading } ) // side
+] );
 
-function render(){
-  requestAnimationFrame(render);
-  renderer.render(scene, camera);
+group = new THREE.Group();
+group.position.y = 100;
+
+scene.add( group );
+
+loadFont();
+
+// RENDERER
+
+renderer = new THREE.WebGLRenderer( { antialias: true } );
+renderer.setClearColor( scene.fog.color );
+renderer.setPixelRatio( window.devicePixelRatio );
+renderer.setSize( window.innerWidth, window.innerHeight );
+container.appendChild( renderer.domElement );
+
+// ORBITCONTROLS
+
+controls = new THREE.OrbitControls(camera, renderer.comElement);
+
+// STATS
+
+stats = new Stats();
+stats.domElement.style.position = 'absolute';
+stats.domElement.style.top = '0px';
+//container.appendChild( stats.domElement );
+
+//
+
+window.addEventListener( 'resize', onWindowResize, false );
+
 }
 
+function onWindowResize() {
+
+windowHalfX = window.innerWidth / 2;
+windowHalfY = window.innerHeight / 2;
+
+camera.aspect = window.innerWidth / window.innerHeight;
+camera.updateProjectionMatrix();
+
+renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
+
+function loadFont() {
+
+var loader = new THREE.FontLoader();
+loader.load( '/static/helvetiker_bold.typeface.js', function ( response ) {
+
+font = response;
+
+createText();
+
+} );
+
+}
+
+function createText() {
+
+//TEST DATA
+var coordinates = [["MOp",4606,2116,7167],
+                   ["SSp-bfd",7118,1901,8586],
+                   ["MOs",3122,2333,6498],
+                   ["VISp",9041,1404,8054],
+                   ["SSs",5885,3502,9182],
+                   ["SSp-ul",5762,1502,7472],
+                   ["RSPv",7560,1100,6063],
+                   ["TEa",6760,4320,9510],
+                   ["ECT",7645,4310,9860]
+];
+
+
+for(var i = 0; i < coordinates.length; ++i){
+
+<!-- MeshCreate -->
+
+sphereGeo = new THREE.SphereGeometry(sphereSize);
+
+textGeo = new THREE.TextGeometry( coordinates[i][0], {
+
+font: font,
+
+size: size,
+height: height,
+curveSegments: curveSegments,
+
+bevelThickness: bevelThickness,
+bevelSize: bevelSize,
+bevelEnabled: bevelEnabled,
+
+material: 0,
+extrudeMaterial: 1
+
+});
+
+textGeo.computeBoundingBox();
+textGeo.computeVertexNormals();
+
+// "fix" side normals by removing z-component of normals for side faces
+// (this doesn't work well for beveled geometry as then we lose nice curvature around z-axis)
+
+var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+
+sphereMesh = new THREE.Mesh( sphereGeo, smaterial );
+sphereMesh.position.x = centerOffset + (coordinates[i][1]/scale);
+sphereMesh.position.y = hover + (coordinates[i][2]/scale);
+sphereMesh.position.z = 0 + (coordinates[i][3]/scale);
+
+textMesh = new THREE.Mesh( textGeo, material );
+
+textMesh.position.x = centerOffset - sphereSize/2 + (coordinates[i][1]/scale);
+textMesh.position.y = hover + sphereSize + (coordinates[i][2]/scale);
+textMesh.position.z = 0 + (coordinates[i][3]/scale);
+
+textMesh.rotation.x = 0;
+textMesh.rotation.y = Math.PI * 2;
+
+sphereMeshes.push(sphereMesh);
+textMeshes.push(textMesh);
+
+group.add( sphereMesh );
+group.add( textMesh );
+
+<!-- MeshCreate -->
+
+}
+
+
+}
+
+
+//
+
+function animate() {
+
+requestAnimationFrame( animate );
+
 render();
+stats.update();
+controls.update();
 
+}
 
-})();
+function render() {
+
+for(var i = 0; i < textMeshes.length; ++i){
+  textMeshes[i].rotation.setFromRotationMatrix( camera.matrix );
+}
+
+renderer.clear();
+renderer.render( scene, camera );
+
+}
 
 {% endblock %}
+

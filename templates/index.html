@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
-
 {% block webglscript %}
+
+
+//--------------- WEBGL ---------------
 
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
@@ -235,5 +237,13 @@ renderer.render( scene, camera );
 
 }
 
-{% endblock %}
+//---------------WEBSOCKET---------------
 
+var socket = io.connect('http://' + document.domain + ':' + location.port)
+//var socket = io.connect()
+
+socket.on('activation', function(data){
+    smaterial.color.setHex(0xffffff);
+});
+
+{% endblock %}

@@ -1,7 +1,8 @@
+#!/usr/bin/env python
 import csv
 import sqlite3
 
-conn = sqlite3.connect('../cells.db')
+conn = sqlite3.connect('cells.db')
 
 c = conn.cursor()
 

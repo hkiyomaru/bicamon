@@ -1,13 +1,17 @@
+#!/usr/bin/env python
 import csv
 import sqlite3
 
-conn = sqlite3.connect('../cells.db')
+conn = sqlite3.connect('cells.db')
 
-csvReader = csv.reader(open('../seeds/Isocortex.csv', 'rb'))
+csvReader = csv.reader(open('seeds/Isocortex.csv', 'rb'))
 
-sql = u"insert into cells values (?, ?, ?, ?)"
+sql = u"insert into cells values (?, ?, ?, ?, ?)"
 for row in csvReader:
-    conn.execute(sql, (row[0], row[1], row[2], row[3]))
+    try:
+        conn.execute(sql, (None, row[0], row[1], row[2], row[3]))
+    except:
+        pass
 
 conn.commit()
 

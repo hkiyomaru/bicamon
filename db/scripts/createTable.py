@@ -1,10 +1,12 @@
+#!/usr/bin/env python
 import sqlite3
 
-conn = sqlite3.connect('../cells.db')
+conn = sqlite3.connect('cells.db')
 
 sql = u"""
 create table cells (
-  name varchar(10),
+  id integer PRIMARY KEY AUTOINCREMENT,
+  name varchar(10) UNIQUE,
   x integer,
   y integer,
   z integer

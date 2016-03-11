@@ -20,12 +20,12 @@ var textMeshes = [];
 
 var firstLetter = true;
 
-var sphereSize = 30;
+var sphereSize = 25;
 
 var text,
 
 height = 1,
-size = 20,
+size = 15,
 hover = 20,
 
 curveSegments = 4,
@@ -70,7 +70,7 @@ camera.lookAt( cameraTarget );
 // SCENE
 
 scene = new THREE.Scene();
-scene.fog = new THREE.Fog( 0x161616, 250, 5000 );
+scene.fog = new THREE.Fog( 0x161616, 150, 5000 );
 
 // LIGHTS
 
@@ -144,7 +144,7 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 function loadFont() {
 
 var loader = new THREE.FontLoader();
-loader.load( '/static/helvetiker_bold.typeface.js', function ( response ) {
+loader.load( '/static/helvetiker_regular.typeface.js', function ( response ) {
 
 font = response;
 

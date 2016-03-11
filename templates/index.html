@@ -156,26 +156,13 @@ createText();
 
 function createText() {
 
-//TEST DATA
-var coordinates = [["MOp",4606,2116,7167],
-                   ["SSp-bfd",7118,1901,8586],
-                   ["MOs",3122,2333,6498],
-                   ["VISp",9041,1404,8054],
-                   ["SSs",5885,3502,9182],
-                   ["SSp-ul",5762,1502,7472],
-                   ["RSPv",7560,1100,6063],
-                   ["TEa",6760,4320,9510],
-                   ["ECT",7645,4310,9860]
-];
-
-
-for(var i = 0; i < coordinates.length; ++i){
+{% for cell in cells %}
 
 <!-- MeshCreate -->
 
 sphereGeo = new THREE.SphereGeometry(sphereSize);
 
-textGeo = new THREE.TextGeometry( coordinates[i][0], {
+textGeo = new THREE.TextGeometry( "{{ cell['name'] }}", {
 
 font: font,
 
@@ -201,15 +188,15 @@ textGeo.computeVertexNormals();
 var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
 sphereMesh = new THREE.Mesh( sphereGeo, smaterial );
-sphereMesh.position.x = centerOffset + (coordinates[i][1]/scale);
-sphereMesh.position.y = hover + (coordinates[i][2]/scale);
-sphereMesh.position.z = 0 + (coordinates[i][3]/scale);
+sphereMesh.position.x = centerOffset + ({{ cell['x'] }}/scale);
+sphereMesh.position.y = hover + ({{ cell['y'] }}/scale);
+sphereMesh.position.z = 0 + ({{ cell['z'] }}/scale);
 
 textMesh = new THREE.Mesh( textGeo, material );
 
-textMesh.position.x = centerOffset - sphereSize/2 + (coordinates[i][1]/scale);
-textMesh.position.y = hover + sphereSize + (coordinates[i][2]/scale);
-textMesh.position.z = 0 + (coordinates[i][3]/scale);
+textMesh.position.x = centerOffset - sphereSize/2 + ({{ cell['x'] }}/scale);
+textMesh.position.y = hover + sphereSize + ({{ cell['y'] }}/scale);
+textMesh.position.z = 0 + ({{ cell['z'] }}/scale);
 
 textMesh.rotation.x = 0;
 textMesh.rotation.y = Math.PI * 2;
@@ -220,10 +207,7 @@ textMeshes.push(textMesh);
 group.add( sphereMesh );
 group.add( textMesh );
 
-<!-- MeshCreate -->
-
-}
-
+{% endfor %}
 
 }
 

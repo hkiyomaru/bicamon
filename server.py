@@ -28,9 +28,8 @@ def query_db(query, args=(), one=False):
 
 @app.route('/')
 def index():
-    # for cell in query_db('select * from cells'):
-    #     print cell['name']
-    return render_template('index.html')
+    cells = query_db('select * from cells')
+    return render_template('index.html', cells = cells)
 
 if __name__ == '__main__':
     app.debug = True

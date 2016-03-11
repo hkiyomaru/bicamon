@@ -71,5 +71,7 @@ target/
 *~
 *.swp
 
+*.db
+
 coordinates/
 venv/

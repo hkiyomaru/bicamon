@@ -1,9 +1,13 @@
 import sqlite3
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, request
+from flask.ext.socketio import SocketIO, send, emit
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'mouse-brain-visualization'
+socketio = SocketIO(app)
 DATABASE = 'db/cells.db'
 
+# ----------- DB -----------
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -26,11 +30,21 @@ def query_db(query, args=(), one=False):
     cur.close()
     return (rv[0] if rv else None) if one else rv
 
+# ----------- Routing -----------
 @app.route('/')
 def index():
     cells = query_db('select * from cells')
     return render_template('index.html', cells = cells)
 
+@app.route('/api', methods=['GET', 'POST'])
+def api():
+    if request.method == 'POST':
+        data =  request.json
+        socketio.emit('activation', data["cells"])
+        return "Request was sended.\n"
+    else:
+        return "No use to send request.\n"
+
 if __name__ == '__main__':
     app.debug = True
-    app.run()
+    socketio.run(app)

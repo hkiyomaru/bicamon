@@ -17,7 +17,7 @@ var group, textMesh, textGeo, material;
 
 var scale = 10;
 
-var sphereMeshes = [];
+var sphereMaterials = [];
 var textMeshes = [];
 
 var firstLetter = true;
@@ -88,8 +88,6 @@ var ambient = new THREE.AmbientLight(0x888888);
 scene.add(ambient);
 
 // SPHERE MATERIAL
-
-smaterial = new THREE.MeshLambertMaterial({ color: 0xffff00 });
 
 <!-- pointLight.color.setHSL( Math.random(), 1, 0.5 ); -->
 hex = decimalToHex( pointLight.color.getHex() );
@@ -162,6 +160,8 @@ function createText() {
 
 <!-- MeshCreate -->
 
+smaterial = new THREE.MeshLambertMaterial({ color: 0xffff00 });
+
 sphereGeo = new THREE.SphereGeometry(sphereSize);
 
 textGeo = new THREE.TextGeometry( "{{ cell['name'] }}", {
@@ -203,7 +203,7 @@ textMesh.position.z = 0 + ({{ cell['z'] }}/scale);
 textMesh.rotation.x = 0;
 textMesh.rotation.y = Math.PI * 2;
 
-sphereMeshes.push(sphereMesh);
+sphereMaterials.push(smaterial);
 textMeshes.push(textMesh);
 
 group.add( sphereMesh );
@@ -243,7 +243,9 @@ var socket = io.connect('http://' + document.domain + ':' + location.port)
 //var socket = io.connect()
 
 socket.on('activation', function(data){
-    smaterial.color.setHex(0xffffff);
+  for(var i=0; i<data.length; i++){
+    sphereMaterials[1].color.setHex(0xffffff);
+  }
 });
 
 {% endblock %}

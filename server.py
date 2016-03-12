@@ -55,11 +55,17 @@ def index():
 
 @app.route('/api', methods=['GET', 'POST'])
 def api():
-    #if request.method == 'POST' and request.cells.lengh != 0:
-    socketio.emit('activation', [0, 1, 2])
-    return "Request was sended.\n"
-    #else:
-    #    return "No use to send request."
+    if request.method == 'POST':
+        data =  request.json
+        socketio.emit('activation', data["cells"])
+        return "Request was sended.\n"
+    else:
+        return "No use to send request.\n"
+
+'''
+API
+curl localhost:5000/api --request POST --header 'Content-Type: application/json' --data-binary '{"cells":[0, 1, 2]}'
+'''
 
 if __name__ == '__main__':
     app.debug = True

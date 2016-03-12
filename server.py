@@ -30,23 +30,6 @@ def query_db(query, args=(), one=False):
     cur.close()
     return (rv[0] if rv else None) if one else rv
 
-# ----------- WebSockets -----------
-# @socketio.on('message')
-# def handle_message(message):
-#     send(message)
-
-# @socketio.on('json')
-# def handle_json(json):
-#     send(json, json=True)
-
-# @socketio.on('activation')
-# def send_activation(json):
-#     emit('activation', json, callback=ack)
-
-# @socketio.on_error()
-# def error_handler(e):
-#     print e
-
 # ----------- Routing -----------
 @app.route('/')
 def index():
@@ -61,11 +44,6 @@ def api():
         return "Request was sended.\n"
     else:
         return "No use to send request.\n"
-
-'''
-API
-curl localhost:5000/api --request POST --header 'Content-Type: application/json' --data-binary '{"cells":[0, 1, 2]}'
-'''
 
 if __name__ == '__main__':
     app.debug = True

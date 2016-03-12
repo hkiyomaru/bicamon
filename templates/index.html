@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block webglscript %}
 
+{% block webglscript %}
 
 //--------------- WEBGL ---------------
 
@@ -50,105 +50,103 @@ animate();
 
 function decimalToHex( d ) {
 
-var hex = Number( d ).toString( 16 );
-hex = "000000".substr( 0, 6 - hex.length ) + hex;
-return hex.toUpperCase();
+  var hex = Number( d ).toString( 16 );
+  hex = "000000".substr( 0, 6 - hex.length ) + hex;
+  return hex.toUpperCase();
 
 }
 
 function init() {
 
-container = document.createElement( 'div' );
-document.body.appendChild( container );
+  container = document.createElement( 'div' );
+  document.body.appendChild( container );
 
-// CAMERA
+  // CAMERA
 
-camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
-camera.position.set( 0, 400, 700 );
+  camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
+  camera.position.set( 0, 400, 700 );
 
-cameraTarget = new THREE.Vector3( 0, 150, 0 );
-camera.lookAt( cameraTarget );
+  cameraTarget = new THREE.Vector3( 0, 150, 0 );
+  camera.lookAt( cameraTarget );
 
-// SCENE
+  // SCENE
 
-scene = new THREE.Scene();
-scene.fog = new THREE.Fog( 0x161616, 150, 5000 );
+  scene = new THREE.Scene();
+  scene.fog = new THREE.Fog( 0x161616, 150, 7000 );
 
-// LIGHTS
+  // LIGHTS
 
-var dirLight = new THREE.DirectionalLight( 0xffffff, 0.125 );
-dirLight.position.set( 0, 0, 1 ).normalize();
-scene.add( dirLight );
+  var dirLight = new THREE.DirectionalLight( 0xffffff, 0.125 );
+  dirLight.position.set( 0, 0, 1 ).normalize();
+  scene.add( dirLight );
 
-var pointLight = new THREE.PointLight( 0xffffff, 1.5 );
-pointLight.position.set( 0, 100, 90 );
-scene.add( pointLight );
+  var pointLight = new THREE.PointLight( 0xffffff, 1.5 );
+  pointLight.position.set( 0, 100, 90 );
+  scene.add( pointLight );
 
-var ambient = new THREE.AmbientLight(0x888888);
-scene.add(ambient);
+  var ambient = new THREE.AmbientLight(0x888888);
+  scene.add(ambient);
 
-// SPHERE MATERIAL
+  // SPHERE MATERIAL
 
-<!-- pointLight.color.setHSL( Math.random(), 1, 0.5 ); -->
-hex = decimalToHex( pointLight.color.getHex() );
+  <!-- pointLight.color.setHSL( Math.random(), 1, 0.5 ); -->
+  hex = decimalToHex( pointLight.color.getHex() );
 
-material = new THREE.MultiMaterial( [
-new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading } ), // front
-new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.SmoothShading } ) // side
-] );
+  material = new THREE.MultiMaterial( [
+    new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading } ), // front
+    new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.SmoothShading } ) // side
+  ] );
 
-group = new THREE.Group();
-group.position.y = 100;
+  group = new THREE.Group();
+  group.position.y = 100;
 
-scene.add( group );
+  scene.add( group );
 
-loadFont();
+  loadFont();
 
-// RENDERER
+  // RENDERER
 
-renderer = new THREE.WebGLRenderer( { antialias: true } );
-renderer.setClearColor( scene.fog.color );
-renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth, window.innerHeight );
-container.appendChild( renderer.domElement );
+  renderer = new THREE.WebGLRenderer( { antialias: true } );
+  renderer.setClearColor( scene.fog.color );
+  renderer.setPixelRatio( window.devicePixelRatio );
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  container.appendChild( renderer.domElement );
 
-// ORBITCONTROLS
+  // ORBITCONTROLS
 
-controls = new THREE.OrbitControls(camera, renderer.comElement);
+  controls = new THREE.OrbitControls(camera);
+  controls.maxDistance = 4000;
 
-// STATS
+  // STATS
 
-stats = new Stats();
-stats.domElement.style.position = 'absolute';
-stats.domElement.style.top = '0px';
-//container.appendChild( stats.domElement );
+  stats = new Stats();
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.top = '0px';
+  //container.appendChild( stats.domElement );
 
-//
-
-window.addEventListener( 'resize', onWindowResize, false );
+  window.addEventListener( 'resize', onWindowResize, false );
 
 }
 
 function onWindowResize() {
 
-windowHalfX = window.innerWidth / 2;
-windowHalfY = window.innerHeight / 2;
+  windowHalfX = window.innerWidth / 2;
+  windowHalfY = window.innerHeight / 2;
 
-camera.aspect = window.innerWidth / window.innerHeight;
-camera.updateProjectionMatrix();
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
 
-renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.setSize( window.innerWidth, window.innerHeight );
 
 }
 
 function loadFont() {
 
-var loader = new THREE.FontLoader();
-loader.load( '/static/helvetiker_regular.typeface.js', function ( response ) {
+  var loader = new THREE.FontLoader();
+  loader.load( '/static/helvetiker_regular.typeface.js', function ( response ) {
 
-font = response;
-
-createText();
+  font = response;
+  createText();
 
 } );
 
@@ -156,60 +154,54 @@ createText();
 
 function createText() {
 
-{% for cell in cells %}
+  <!-- MeshCreate -->
+  {% for cell in cells %}
 
-<!-- MeshCreate -->
+    //sphere material
+    smaterial = new THREE.MeshLambertMaterial({ color: 0xffff00 });
 
-smaterial = new THREE.MeshLambertMaterial({ color: 0xffff00 });
+    //sphere geometry
+    sphereGeo = new THREE.SphereGeometry(sphereSize);
 
-sphereGeo = new THREE.SphereGeometry(sphereSize);
+    //text geometry
+    textGeo = new THREE.TextGeometry( "{{ cell['name'] }}", {
+      font: font,
+      size: size,
+      height: height,
+      curveSegments: curveSegments,
+      bevelThickness: bevelThickness,
+      bevelSize: bevelSize,
+      bevelEnabled: bevelEnabled,
+      material: 0,
+      extrudeMaterial: 1
+    });
 
-textGeo = new THREE.TextGeometry( "{{ cell['name'] }}", {
+    textGeo.computeBoundingBox();
+    textGeo.computeVertexNormals();
 
-font: font,
+    var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
-size: size,
-height: height,
-curveSegments: curveSegments,
+    sphereMesh = new THREE.Mesh( sphereGeo, smaterial );
+    sphereMesh.position.x = centerOffset + ({{ cell['x'] }}/scale);
+    sphereMesh.position.y = hover + ({{ cell['y'] }}/scale);
+    sphereMesh.position.z = 0 + ({{ cell['z'] }}/scale);
 
-bevelThickness: bevelThickness,
-bevelSize: bevelSize,
-bevelEnabled: bevelEnabled,
+    textMesh = new THREE.Mesh( textGeo, material );
 
-material: 0,
-extrudeMaterial: 1
+    textMesh.position.x = centerOffset - sphereSize/2 + ({{ cell['x'] }}/scale);
+    textMesh.position.y = hover + sphereSize + ({{ cell['y'] }}/scale);
+    textMesh.position.z = 0 + ({{ cell['z'] }}/scale);
 
-});
+    textMesh.rotation.x = 0;
+    textMesh.rotation.y = Math.PI * 2;
 
-textGeo.computeBoundingBox();
-textGeo.computeVertexNormals();
+    sphereMaterials.push(smaterial);
+    textMeshes.push(textMesh);
 
-// "fix" side normals by removing z-component of normals for side faces
-// (this doesn't work well for beveled geometry as then we lose nice curvature around z-axis)
+    group.add( sphereMesh );
+    group.add( textMesh );
 
-var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
-
-sphereMesh = new THREE.Mesh( sphereGeo, smaterial );
-sphereMesh.position.x = centerOffset + ({{ cell['x'] }}/scale);
-sphereMesh.position.y = hover + ({{ cell['y'] }}/scale);
-sphereMesh.position.z = 0 + ({{ cell['z'] }}/scale);
-
-textMesh = new THREE.Mesh( textGeo, material );
-
-textMesh.position.x = centerOffset - sphereSize/2 + ({{ cell['x'] }}/scale);
-textMesh.position.y = hover + sphereSize + ({{ cell['y'] }}/scale);
-textMesh.position.z = 0 + ({{ cell['z'] }}/scale);
-
-textMesh.rotation.x = 0;
-textMesh.rotation.y = Math.PI * 2;
-
-sphereMaterials.push(smaterial);
-textMeshes.push(textMesh);
-
-group.add( sphereMesh );
-group.add( textMesh );
-
-{% endfor %}
+  {% endfor %}
 
 }
 
@@ -218,30 +210,28 @@ group.add( textMesh );
 
 function animate() {
 
-requestAnimationFrame( animate );
+  requestAnimationFrame( animate );
 
-render();
-stats.update();
-controls.update();
+  render();
+  stats.update();
+  controls.update();
 
 }
 
 function render() {
 
-for(var i = 0; i < textMeshes.length; ++i){
-  textMeshes[i].rotation.setFromRotationMatrix( camera.matrix );
+  for(var i = 0; i < textMeshes.length; ++i){
+    textMeshes[i].rotation.setFromRotationMatrix( camera.matrix );
+  }
+
+  renderer.clear();
+  renderer.render( scene, camera );
+
 }
 
-renderer.clear();
-renderer.render( scene, camera );
-
-}
-
-//---------------WEBSOCKET---------------
+//--------------- WEBSOCKET ---------------
 
 var socket = io.connect('http://' + document.domain + ':' + location.port)
-//var socket = io.connect()
-
 socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
 	index = data[i];

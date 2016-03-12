@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, request
 from flask.ext.socketio import SocketIO, send, emit
 
 app = Flask(__name__)
@@ -53,10 +53,13 @@ def index():
     cells = query_db('select * from cells')
     return render_template('index.html', cells = cells)
 
-@app.route('/api')
+@app.route('/api', methods=['GET', 'POST'])
 def api():
-    socketio.emit('activation', [1])
+    #if request.method == 'POST' and request.cells.lengh != 0:
+    socketio.emit('activation', [0, 1, 2])
     return "Request was sended.\n"
+    #else:
+    #    return "No use to send request."
 
 if __name__ == '__main__':
     app.debug = True

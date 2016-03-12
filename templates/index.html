@@ -244,7 +244,8 @@ var socket = io.connect('http://' + document.domain + ':' + location.port)
 
 socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
-    sphereMaterials[1].color.setHex(0xffffff);
+	index = data[i];
+    sphereMaterials[index].color.setHex(0xffffff);
   }
 });
 

@@ -4,7 +4,7 @@ import sqlite3
 
 conn = sqlite3.connect('cells.db')
 
-csvReader = csv.reader(open('seeds/Isocortex.csv', 'rb'))
+csvReader = csv.reader(open('seeds/cells.csv', 'rb'))
 
 sql = u"insert into cells values (?, ?, ?, ?, ?, ?, ?)"
 for row in csvReader:

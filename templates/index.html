@@ -10,7 +10,7 @@ THREE.Cache.enabled = true;
 var container, stats, controls, hex, color;
 var camera, cameraTarget, scene, renderer;
 var group, textMesh, textGeo, material;
-var scale = 10;
+var scale = 5;
 
 var sphereMaterials = {};
 var textMeshes = [];
@@ -50,10 +50,10 @@ function init() {
 
   // CAMERA
 
-  camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
-  camera.position.set( 0, 400, 700 );
+  camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
+  camera.position.set( 3800, 1950, 2800 );
 
-  cameraTarget = new THREE.Vector3( 0, 150, 0 );
+  cameraTarget = new THREE.Vector3( 2500, 1500, 2050 );
   camera.lookAt( cameraTarget );
 
   // SCENE
@@ -220,6 +220,7 @@ function attenuate(){
       sphereMaterials[key].color.offsetHSL(0, 0, attenuation_rate);
     }
   }
+  console.log(camera.position);
 }
 
 function startAttenuation(){

@@ -220,7 +220,6 @@ function attenuate(){
       sphereMaterials[key].color.offsetHSL(0, 0, attenuation_rate);
     }
   }
-  console.log(camera.position);
 }
 
 function startAttenuation(){
@@ -237,7 +236,6 @@ socket.on('activation', function(data){
     if (sphereMaterials[index].color.getHSL()["l"] < 0.8) {
 	  sphereMaterials[index].color.offsetHSL(0, 0, 0.1);
     }
-    console.log(sphereMaterials[index].color.getHSL());
   }
 });
 

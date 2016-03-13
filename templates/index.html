@@ -19,7 +19,7 @@ var firstLetter = true;
 
 var text,
 height = 1,
-size = 15,
+size = 20,
 hover = 20,
 curveSegments = 4,
 bevelThickness = 2,
@@ -35,16 +35,7 @@ init();
 animate();
 startAttenuation();
 
-function decimalToHex( d ) {
-
-  var hex = Number( d ).toString( 16 );
-  hex = "000000".substr( 0, 6 - hex.length ) + hex;
-  return hex.toUpperCase();
-
-}
-
 function init() {
-
   container = document.createElement( 'div' );
   document.body.appendChild( container );
 
@@ -62,19 +53,8 @@ function init() {
   scene.fog = new THREE.Fog( 0x222222, 150, 12000 );
 
   // LIGHTS
-
-  var dirLight = new THREE.DirectionalLight( 0xffffff, 0.125 );
-  dirLight.position.set( 0, 0, 1 ).normalize();
-  scene.add( dirLight );
-
-  var pointLight = new THREE.PointLight( 0xffffff, 1.5 );
-  pointLight.position.set( 0, 100, 90 );
-  scene.add( pointLight );
-
-  var ambient = new THREE.AmbientLight(0x888888);
+  var ambient = new THREE.AmbientLight(0xffffff);
   scene.add(ambient);
-
-  hex = decimalToHex( pointLight.color.getHex() );
 
   material = new THREE.MultiMaterial( [
     new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading } ), // front
@@ -109,11 +89,9 @@ function init() {
   //container.appendChild( stats.domElement );
 
   window.addEventListener( 'resize', onWindowResize, false );
-
 }
 
 function onWindowResize() {
-
   windowHalfX = window.innerWidth / 2;
   windowHalfY = window.innerHeight / 2;
 
@@ -121,26 +99,20 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize( window.innerWidth, window.innerHeight );
-
 }
 
 function loadFont() {
-
   var loader = new THREE.FontLoader();
   loader.load( '/static/helvetiker_regular.typeface.js', function ( response ) {
-
   font = response;
   createText();
-
 } );
 
 }
 
 function createText() {
-
   <!-- MeshCreate -->
   {% for cell in cells %}
-
     //sphere material
     smaterial = new THREE.MeshLambertMaterial({ color: 0x330000 });
 
@@ -187,13 +159,10 @@ function createText() {
     group.add( textMesh );
 
   {% endfor %}
-
 }
 
 function animate() {
-
   requestAnimationFrame( animate );
-
   render();
   stats.update();
   controls.update();
@@ -201,29 +170,26 @@ function animate() {
 }
 
 function render() {
-
   for(var i = 0; i < textMeshes.length; ++i){
     textMeshes[i].rotation.setFromRotationMatrix( camera.matrix );
   }
-
   renderer.clear();
   renderer.render( scene, camera );
-
 }
 
 
 //--------------- ATTENUATION ---------------
 function attenuate(){
-  attenuation_rate = -0.01;
+  attenuation_rate = -0.04;
   for (var key in sphereMaterials){
-    if (sphereMaterials[key].color.getHSL()["l"] > 0.1) {
+    if (sphereMaterials[key].color.getHSL()["l"] > 0.12) {
       sphereMaterials[key].color.offsetHSL(0, 0, attenuation_rate);
     }
   }
 }
 
 function startAttenuation(){
-  interval = 100;
+  interval = 200;
   setInterval("attenuate()", interval);
 }
 
@@ -233,8 +199,8 @@ var socket = io.connect('http://' + document.domain + ':' + location.port)
 socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
 	index = data[i];
-    if (sphereMaterials[index].color.getHSL()["l"] < 0.8) {
-	  sphereMaterials[index].color.offsetHSL(0, 0, 0.1);
+    if (sphereMaterials[index].color.getHSL()["l"] < 0.7) {
+	  sphereMaterials[index].color.offsetHSL(0, 0, 0.2);
     }
   }
 });

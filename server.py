@@ -34,7 +34,7 @@ def query_db(query, args=(), one=False):
 @app.route('/')
 def index():
     cells = query_db('select * from cells')
-    return render_template('index.html', cells = cells)
+    return render_template('index.html', cells=cells)
 
 @app.route('/api', methods=['GET', 'POST'])
 def api():
@@ -44,11 +44,11 @@ def api():
         for d in data["cells"]:
             index = query_db('select id from cells where name="%s"' % d)
             if len(index) != 0:
-                data_index.append(index[0]["id"] - 1)
+                data_index.append(index[0]["id"])
         socketio.emit('activation', data_index)
         return "Request was sended.\n"
     else:
-        return "No use to send request.\n"
+        return "Invalid access.\n"
 
 if __name__ == '__main__':
     app.debug = True

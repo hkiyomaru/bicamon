@@ -1,6 +1,7 @@
 import sqlite3
 from flask import Flask, render_template, g, request
 from flask.ext.socketio import SocketIO, send, emit
+import math
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mouse-brain-visualization'

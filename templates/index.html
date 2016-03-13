@@ -18,8 +18,6 @@ var textMeshes = [];
 
 var firstLetter = true;
 
-var sphereSize = 25;
-
 var text,
 height = 1,
 size = 15,
@@ -150,7 +148,9 @@ function createText() {
     smaterial = new THREE.MeshLambertMaterial({ color: 0xffff00 });
 
     //sphere geometry
-    sphereGeo = new THREE.SphereGeometry(sphereSize);
+    radius = Math.sqrt({{ cell["voxel"] }} / Math.PI);
+    console.log(radius);
+    sphereGeo = new THREE.SphereGeometry(radius);
 
     //text geometry
     textGeo = new THREE.TextGeometry( "{{ cell['name'] }}", {
@@ -177,8 +177,8 @@ function createText() {
 
     textMesh = new THREE.Mesh( textGeo, material );
 
-    textMesh.position.x = centerOffset - sphereSize/2 + ({{ cell['x'] }}/scale);
-    textMesh.position.y = hover + sphereSize + ({{ cell['y'] }}/scale);
+    textMesh.position.x = centerOffset - radius/2 + ({{ cell['x'] }}/scale);
+    textMesh.position.y = hover + radius + ({{ cell['y'] }}/scale);
     textMesh.position.z = 0 + ({{ cell['z'] }}/scale);
 
     textMesh.rotation.x = 0;

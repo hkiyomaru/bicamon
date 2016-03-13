@@ -7,6 +7,8 @@ sql = u"""
 create table cells (
   id integer PRIMARY KEY AUTOINCREMENT,
   name varchar(10) UNIQUE,
+  region varchar(30),
+  voxel integer,
   x integer,
   y integer,
   z integer

@@ -15,4 +15,15 @@ for row in csvReader:
 
 conn.commit()
 
+csvReader = csv.reader(open('seeds/links.csv', 'rb'))
+
+sql = u"insert into links values (?, ?, ?, ?)"
+for row in csvReader:
+    try:
+        conn.execute(sql, (None, row[0], row[1], row[2]))
+    except:
+        pass
+
+conn.commit()
+
 conn.close()

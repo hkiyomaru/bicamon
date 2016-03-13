@@ -8,16 +8,12 @@
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 THREE.Cache.enabled = true;
-
 var container, stats, controls, hex, color;
-
 var camera, cameraTarget, scene, renderer;
-
 var group, textMesh, textGeo, material;
-
 var scale = 10;
 
-var sphereMaterials = [];
+var sphereMaterials = {};
 var textMeshes = [];
 
 var firstLetter = true;
@@ -25,22 +21,15 @@ var firstLetter = true;
 var sphereSize = 25;
 
 var text,
-
 height = 1,
 size = 15,
 hover = 20,
-
 curveSegments = 4,
-
 bevelThickness = 2,
 bevelSize = 1.5,
 bevelSegments = 3,
 bevelEnabled = true,
-
 font = undefined;
-
-var mouseX = 0;
-var mouseXOnMouseDown = 0;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -195,7 +184,7 @@ function createText() {
     textMesh.rotation.x = 0;
     textMesh.rotation.y = Math.PI * 2;
 
-    sphereMaterials.push(smaterial);
+    sphereMaterials[{{ cell['id'] }}] = smaterial;
     textMeshes.push(textMesh);
 
     group.add( sphereMesh );
@@ -204,9 +193,6 @@ function createText() {
   {% endfor %}
 
 }
-
-
-//
 
 function animate() {
 

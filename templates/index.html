@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-
 {% block webglscript %}
 
 //--------------- WEBGL ---------------
@@ -34,6 +33,7 @@ var windowHalfY = window.innerHeight / 2;
 
 init();
 animate();
+startAttenuation();
 
 function decimalToHex( d ) {
 
@@ -59,7 +59,7 @@ function init() {
   // SCENE
 
   scene = new THREE.Scene();
-  scene.fog = new THREE.Fog( 0x161616, 150, 7000 );
+  scene.fog = new THREE.Fog( 0x222222, 150, 12000 );
 
   // LIGHTS
 
@@ -74,9 +74,6 @@ function init() {
   var ambient = new THREE.AmbientLight(0x888888);
   scene.add(ambient);
 
-  // SPHERE MATERIAL
-
-  <!-- pointLight.color.setHSL( Math.random(), 1, 0.5 ); -->
   hex = decimalToHex( pointLight.color.getHex() );
 
   material = new THREE.MultiMaterial( [
@@ -101,8 +98,8 @@ function init() {
 
   // ORBITCONTROLS
 
-  controls = new THREE.OrbitControls(camera);
-  controls.maxDistance = 4000;
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.maxDistance = 5500;
 
   // STATS
 
@@ -145,11 +142,10 @@ function createText() {
   {% for cell in cells %}
 
     //sphere material
-    smaterial = new THREE.MeshLambertMaterial({ color: 0xffff00 });
+    smaterial = new THREE.MeshLambertMaterial({ color: 0x330000 });
 
     //sphere geometry
-    radius = Math.sqrt({{ cell["voxel"] }} / Math.PI);
-    console.log(radius);
+    radius = (Math.sqrt({{ cell["voxel"] }} / Math.PI));
     sphereGeo = new THREE.SphereGeometry(radius);
 
     //text geometry
@@ -215,13 +211,32 @@ function render() {
 
 }
 
+
+//--------------- ATTENUATION ---------------
+function attenuate(){
+  attenuation_rate = -0.01;
+  for (var key in sphereMaterials){
+    if (sphereMaterials[key].color.getHSL()["l"] > 0.1) {
+      sphereMaterials[key].color.offsetHSL(0, 0, attenuation_rate);
+    }
+  }
+}
+
+function startAttenuation(){
+  interval = 100;
+  setInterval("attenuate()", interval);
+}
+
 //--------------- WEBSOCKET ---------------
 
 var socket = io.connect('http://' + document.domain + ':' + location.port)
 socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
 	index = data[i];
-    sphereMaterials[index].color.setHex(0xffffff);
+    if (sphereMaterials[index].color.getHSL()["l"] < 0.8) {
+	  sphereMaterials[index].color.offsetHSL(0, 0, 0.1);
+    }
+    console.log(sphereMaterials[index].color.getHSL());
   }
 });
 

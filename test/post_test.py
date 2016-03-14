@@ -2,7 +2,7 @@ import json
 import urllib2
 
 data = { 
-    "cells":["ECT","VISC", "AAA", "CA", "CA1", "CA3"]
+    "cells":["POST", "CA1", "AN", "ECT"]
 }
 
 req = urllib2.Request('http://localhost:5000/api')

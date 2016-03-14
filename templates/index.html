@@ -13,6 +13,7 @@ var group, textMesh, textGeo, material;
 var scale = 5;
 
 var sphereMaterials = {};
+var lineMaterials = {};
 var textMeshes = [];
 
 var firstLetter = true;
@@ -159,6 +160,28 @@ function createText() {
     group.add( textMesh );
 
   {% endfor %}
+
+  {% for link in links %}
+    //line material
+    lmaterial = new THREE.LineBasicMaterial({ color: 0x003300 });
+
+    //line geometry
+    lineGeo = new THREE.Geometry();
+    
+    lineGeo.vertices.push(new THREE.Vector3({{link["root"]["x"]}}/scale, {{link["root"]["y"]}}/scale, {{link["root"]["z"]}}/scale ));
+    lineGeo.vertices.push(new THREE.Vector3({{link["dest"]["x"]}}/scale, {{link["dest"]["y"]}}/scale, {{link["dest"]["z"]}}/scale ));
+
+    line = new THREE.Line(lineGeo, lmaterial);
+
+    if (!({{ link['root']['id'] }} in lineMaterials)){
+      lineMaterials[{{ link['root']['id'] }}] = [];
+    }
+
+    lineMaterials[{{ link['root']['id'] }}].push(lmaterial);
+    
+    group.add( line );
+
+  {% endfor %}
 }
 
 function animate() {
@@ -186,6 +209,13 @@ function attenuate(){
       sphereMaterials[key].color.offsetHSL(0, 0, attenuation_rate);
     }
   }
+  for (var key in lineMaterials){
+    for (var i=0; i<lineMaterials[key].length; i++) {
+      if (lineMaterials[key][i].color.getHSL()["l"] > 0.12) {
+        lineMaterials[key][i].color.offsetHSL(0, 0, attenuation_rate);
+      }
+    }
+  }
 }
 
 function startAttenuation(){
@@ -198,9 +228,16 @@ function startAttenuation(){
 var socket = io.connect('http://' + document.domain + ':' + location.port)
 socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
-	index = data[i];
+    index = data[i];
     if (sphereMaterials[index].color.getHSL()["l"] < 0.7) {
-	  sphereMaterials[index].color.offsetHSL(0, 0, 0.2);
+      sphereMaterials[index].color.offsetHSL(0, 0, 0.2);
+    }
+    if (index in lineMaterials){
+      for(var j=0; j<lineMaterials[index].length; j++){
+        if (lineMaterials[index][j].color.getHSL()["l"] < 0.7) {
+          lineMaterials[index][j].color.offsetHSL(0, 0, 0.2);
+        }
+      }
     }
   }
 });

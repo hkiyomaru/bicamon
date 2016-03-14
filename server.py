@@ -35,7 +35,17 @@ def query_db(query, args=(), one=False):
 @app.route('/')
 def index():
     cells = query_db('select * from cells')
-    return render_template('index.html', cells=cells)
+    links = query_db('select * from links')
+    valid_links = []
+    for link in links:
+        root_coordinate = query_db('select id,x,y,z from cells where name="%s"' % link["root"])
+        dest_coordinate = query_db('select id,x,y,z from cells where name="%s"' % link["dest"])
+        if len(root_coordinate) != 0 and len(dest_coordinate) != 0:
+            link_dict = {}
+            link_dict["root"] = root_coordinate[0]
+            link_dict["dest"] = dest_coordinate[0]
+            valid_links.append(link_dict)
+    return render_template('index.html', cells=cells, links=valid_links)
 
 @app.route('/api', methods=['GET', 'POST'])
 def api():

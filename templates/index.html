@@ -163,7 +163,7 @@ function createText() {
 
   {% for link in links %}
     //line material
-    lmaterial = new THREE.LineBasicMaterial({ color: 0x003300 });
+    lmaterial = new THREE.LineBasicMaterial({ color: 0x003300, opacity: 0.1, transparent: true});
 
     //line geometry
     lineGeo = new THREE.Geometry();
@@ -203,7 +203,7 @@ function render() {
 
 //--------------- ATTENUATION ---------------
 function attenuate(){
-  attenuation_rate = -0.04;
+  attenuation_rate = -0.02;
   for (var key in sphereMaterials){
     if (sphereMaterials[key].color.getHSL()["l"] > 0.12) {
       sphereMaterials[key].color.offsetHSL(0, 0, attenuation_rate);
@@ -230,12 +230,12 @@ socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
     index = data[i];
     if (sphereMaterials[index].color.getHSL()["l"] < 0.7) {
-      sphereMaterials[index].color.offsetHSL(0, 0, 0.2);
+      sphereMaterials[index].color.offsetHSL(0, 0, 0.3);
     }
     if (index in lineMaterials){
       for(var j=0; j<lineMaterials[index].length; j++){
         if (lineMaterials[index][j].color.getHSL()["l"] < 0.7) {
-          lineMaterials[index][j].color.offsetHSL(0, 0, 0.2);
+          lineMaterials[index][j].color.offsetHSL(0, 0, 0.3);
         }
       }
     }

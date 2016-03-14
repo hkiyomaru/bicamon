@@ -44,6 +44,7 @@ def index():
             link_dict = {}
             link_dict["root"] = root_coordinate[0]
             link_dict["dest"] = dest_coordinate[0]
+            link_dict["weight"] = link["weight"]
             valid_links.append(link_dict)
     return render_template('index.html', cells=cells, links=valid_links)
 

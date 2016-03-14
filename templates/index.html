@@ -10,7 +10,7 @@ THREE.Cache.enabled = true;
 var container, stats, controls, hex, color;
 var camera, cameraTarget, scene, renderer;
 var group, textMesh, textGeo, material;
-var scale = 5;
+var scale = 3;
 
 var sphereMaterials = {};
 var lineMaterials = {};
@@ -43,7 +43,7 @@ function init() {
   // CAMERA
 
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
-  camera.position.set( 3800, 1950, 2800 );
+  camera.position.set( 6000, 2850, 3950 );
 
   cameraTarget = new THREE.Vector3( 2500, 1500, 2050 );
   camera.lookAt( cameraTarget );
@@ -80,7 +80,7 @@ function init() {
   // ORBITCONTROLS
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.maxDistance = 5500;
+  controls.maxDistance = 10000;
 
   // STATS
 

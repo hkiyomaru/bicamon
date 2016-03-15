@@ -65,6 +65,10 @@ function init() {
   group = new THREE.Group();
   group.position.y = 100;
 
+  // AXIS HELPER
+  var axisHelper = new THREE.AxisHelper( 10000 );
+  scene.add( axisHelper );
+
   scene.add( group );
 
   loadFont();
@@ -118,7 +122,7 @@ function createText() {
     smaterial = new THREE.MeshLambertMaterial({ color: 0x330000 });
 
     //sphere geometry
-    radius = (Math.sqrt({{ cell["voxel"] }} / Math.PI)) * 2.5;
+    radius = (Math.sqrt({{ cell["voxel"] }} / Math.PI)) * 2.3;
     sphereGeo = new THREE.SphereGeometry(radius);
 
     //text geometry
@@ -168,7 +172,7 @@ function createText() {
     //line geometry
     lineGeo = new THREE.Geometry();
     
-    lineGeo.vertices.push(new THREE.Vector3({{link["root"]["x"]}}/scale, {{link["root"]["y"]}}/scale, {{link["root"]["z"]}}/scale ));
+    lineGeo.vertices.push(new THREE.Vector3({{link["root"]["x"]}}/scale - scale*2, {{link["root"]["y"]}}/scale, {{link["root"]["z"]}}/scale ));
     lineGeo.vertices.push(new THREE.Vector3({{link["dest"]["x"]}}/scale, {{link["dest"]["y"]}}/scale, {{link["dest"]["z"]}}/scale ));
 
     line = new THREE.Line(lineGeo, lmaterial);

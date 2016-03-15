@@ -1,5 +1,6 @@
 #WebGL Visualization of Mouse Brain
 
+![screenshot](https://raw.github.com/wiki/kiyomaro927/MouseBrainVisualizationOnWeb/images/screen_shot.png)
 
 ##Instruction
 
@@ -44,3 +45,15 @@ If you cannot show the page well,
 maybe your browser doesn't support WebGL.
 
 For more information, please access [this page](http://caniuse.com/#search=webgl)(caniuse.com).
+
+##Test
+
+I think the cells you're watching are not firing.
+
+I prepared some test programs in the test directory.
+
+Then, run the test code to fire cells.
+
+```
+$ python post_test.py
+```

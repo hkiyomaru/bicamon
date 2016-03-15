@@ -1,11 +1,33 @@
 import json
 import urllib2
+import time
 
-data = { 
-    "cells":["POST", "CA1", "AN", "ECT"]
+data1 = { 
+    "cells":["CA3", "DG", "ENTl"]
 }
 
-req = urllib2.Request('http://localhost:5000/api')
-req.add_header('Content-Type', 'application/json')
+data2 = { 
+    "cells":["CA1", "ENTm", "PRE", "PIR"]
+}
 
-response = urllib2.urlopen(req, json.dumps(data))
+data3 = {
+    "cells":["POST", "PAR"]
+}
+
+req1 = urllib2.Request('http://localhost:5000/api')
+req1.add_header('Content-Type', 'application/json')
+
+req2 = urllib2.Request('http://localhost:5000/api')
+req2.add_header('Content-Type', 'application/json')
+
+req3 = urllib2.Request('http://localhost:5000/api')
+req3.add_header('Content-Type', 'application/json')
+
+
+for i in range(1000):
+    response = urllib2.urlopen(req1, json.dumps(data1))
+    time.sleep(0.4)
+    response = urllib2.urlopen(req2, json.dumps(data2))
+    time.sleep(0.4)
+    response = urllib2.urlopen(req3, json.dumps(data3))
+    time.sleep(0.6)

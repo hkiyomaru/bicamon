@@ -11,6 +11,4 @@ def send_request(module):
 # test code
 if __name__ == '__main__':
     fired_module = "CA1"
-    for i in range(3):
-        send_request(fired_module)
-        time.sleep(1)
+    send_request(fired_module)

@@ -3,18 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>Web Mouse Brain Visualization</title>
+    {% block extracss %}{% endblock %}
   </head>
   <body>
-    <div id="stage"></div>
-    <script src="/static/three.min.js"></script>
-    <script src="/static/OrbitControls.js"></script>
-    <script src="/static/Detector.js"></script>
-    <script src="/static/stats.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-    <script>
-      {% block webglscript %}
-	  {% endblock %}
-    </script>
+    {% block extrascript %}{% endblock %}
   </body>
 </html>

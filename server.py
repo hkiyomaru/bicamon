@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mouse-brain-visualization'
 socketio = SocketIO(app)
 DATABASE = 'db/cells.db'
-abortrate = 100
+abortrate = 0
 
 # ----------- DB -----------
 def get_db():
@@ -53,7 +53,7 @@ def index():
 
 @app.route('/api', methods=['GET', 'POST'])
 def api():
-    if request.method == 'POST' and random.randint(0, 100) < abortrate:
+    if request.method == 'POST' and random.randint(0, 100) > abortrate:
         data =  request.json
         data_index = []
         for d in data["cells"]:
@@ -67,9 +67,8 @@ def api():
 
 if __name__ == '__main__':
     #Setup abortrate
-    global abortrate
     parser = argparse.ArgumentParser()
-    parser.add_argument('--abortrate', dest='abortrate', default=100, type=int)
+    parser.add_argument('--abortrate', dest='abortrate', default=99, type=int)
     abortrate = parser.parse_args().abortrate
     
     #Run

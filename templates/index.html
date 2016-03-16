@@ -10,6 +10,7 @@
 
 #viewArea{
 }
+
 .toolBox{
   width: 300px;
   height: 120px;
@@ -28,6 +29,7 @@
   background-color: rgba(50, 50, 50, 0.8);
   color: rgba(200, 200, 200, 0.8);
 }
+
 </style>
 
 {% endblock %}
@@ -249,7 +251,16 @@ function render() {
 //--------------- SEARCH ---------------
 function jump(form){
   var query = form.query.value;
-  console.log(query);
+  {% for cell in cells %}
+    if ("{{ cell['name'] }}" == query) {
+      tx = {{cell['x']}}/scale;
+      ty = {{cell['y']}}/scale;
+      tz = {{cell['z']}}/scale;
+      camera.position.set(tx + 5, ty + 5, tz + 5);
+      queryTarget = new THREE.Vector3( tx, ty, tz );
+      camera.lookAt( cameraTarget );
+    }
+  {% endfor %}
 }
 
 //--------------- ATTENUATION ---------------

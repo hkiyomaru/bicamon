@@ -146,7 +146,7 @@ function createText() {
     var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
     sphereMesh = new THREE.Mesh( sphereGeo, smaterial );
-    sphereMesh.position.x = centerOffset + ({{ cell['x'] }}/scale);
+    sphereMesh.position.x = ({{ cell['x'] }}/scale);
     sphereMesh.position.y = hover + ({{ cell['y'] }}/scale);
     sphereMesh.position.z = 0 + ({{ cell['z'] }}/scale);
 

@@ -24,10 +24,10 @@ req3 = urllib2.Request('http://localhost:5000/api')
 req3.add_header('Content-Type', 'application/json')
 
 
-for i in range(1000):
+for i in range(5000):
     response = urllib2.urlopen(req1, json.dumps(data1))
-    time.sleep(0.4)
+    # time.sleep(0.4)
     response = urllib2.urlopen(req2, json.dumps(data2))
-    time.sleep(0.4)
+    # time.sleep(0.4)
     response = urllib2.urlopen(req3, json.dumps(data3))
-    time.sleep(0.6)
+    # time.sleep(0.6)

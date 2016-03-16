@@ -1,13 +1,24 @@
 {% extends "base.html" %}
 
-{% block webglscript %}
+{% block extracss %}
+<style></style>
+{% endblock %}
+
+
+{% block extrascript %}
+<script src="/static/three.min.js"></script>
+<script src="/static/OrbitControls.js"></script>
+<script src="/static/Detector.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+<script>
 
 //--------------- WEBGL ---------------
 
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 THREE.Cache.enabled = true;
-var container, stats, controls, hex, color;
+var container, controls, color;
 var camera, cameraTarget, scene, renderer;
 var group, textMesh, textGeo, material;
 var scale = 2.5;
@@ -43,9 +54,9 @@ function init() {
   // CAMERA
 
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
-  camera.position.set( 7150, 2800, 4700 );
+  camera.position.set( 4000, 400, 1500 );
 
-  cameraTarget = new THREE.Vector3( 2500, 1500, 2050 );
+  cameraTarget = new THREE.Vector3( 0, 0, 0 );
   camera.lookAt( cameraTarget );
 
   // SCENE
@@ -63,11 +74,9 @@ function init() {
   ] );
 
   group = new THREE.Group();
-  group.position.y = 100;
-
-  // AXIS HELPER
-  var axisHelper = new THREE.AxisHelper( 10000 );
-  scene.add( axisHelper );
+  group.position.x = -7661/scale;
+  group.position.y = -4194/scale;
+  group.position.z = -6957/scale;
 
   scene.add( group );
 
@@ -85,13 +94,6 @@ function init() {
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.maxDistance = 10000;
-
-  // STATS
-
-  stats = new Stats();
-  stats.domElement.style.position = 'absolute';
-  stats.domElement.style.top = '0px';
-  //container.appendChild( stats.domElement );
 
   window.addEventListener( 'resize', onWindowResize, false );
 }
@@ -172,7 +174,7 @@ function createText() {
     //line geometry
     lineGeo = new THREE.Geometry();
     
-    lineGeo.vertices.push(new THREE.Vector3({{link["root"]["x"]}}/scale - scale*2, {{link["root"]["y"]}}/scale, {{link["root"]["z"]}}/scale ));
+    lineGeo.vertices.push(new THREE.Vector3({{link["root"]["x"]}}/scale - scale*3, {{link["root"]["y"]}}/scale, {{link["root"]["z"]}}/scale ));
     lineGeo.vertices.push(new THREE.Vector3({{link["dest"]["x"]}}/scale, {{link["dest"]["y"]}}/scale, {{link["dest"]["z"]}}/scale ));
 
     line = new THREE.Line(lineGeo, lmaterial);
@@ -191,7 +193,6 @@ function createText() {
 function animate() {
   requestAnimationFrame( animate );
   render();
-  stats.update();
   controls.update();
 
 }
@@ -223,7 +224,7 @@ function attenuate(){
 }
 
 function startAttenuation(){
-  interval = 100;
+  interval = 50;
   setInterval("attenuate()", interval);
 }
 
@@ -234,16 +235,18 @@ socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
     index = data[i];
     if (sphereMaterials[index].color.getHSL()["l"] < 0.7) {
-      sphereMaterials[index].color.offsetHSL(0, 0, 0.3);
+      sphereMaterials[index].color.offsetHSL(0, 0, 0.2);
     }
     if (index in lineMaterials){
       for(var j=0; j<lineMaterials[index].length; j++){
         if (lineMaterials[index][j].color.getHSL()["l"] < 0.7) {
-          lineMaterials[index][j].color.offsetHSL(0, 0, 0.3);
+          lineMaterials[index][j].color.offsetHSL(0, 0, 0.1);
         }
       }
     }
   }
 });
+
+</script> 
 
 {% endblock %}

@@ -1,7 +1,52 @@
 {% extends "base.html" %}
 
+
 {% block extracss %}
-<style></style>
+
+<style>
+.wrapper{
+  position: relative;
+}
+
+#viewArea{
+}
+
+.toolBox{
+  width: 300px;
+  height: 120px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  text-align: center;
+}
+
+#searchbox{
+  background-color: rgba(100, 100, 100, 0.5);
+  border: None;
+}
+
+#searchbutton{
+  background-color: rgba(50, 50, 50, 0.8);
+  color: rgba(200, 200, 200, 0.8);
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block main %}
+<div class="wrapper">
+  <div id="viewArea"></div>
+  <div class="toolBox">
+    <form class="well form-search" id="searchbox">
+      <input type="text" class="input-medium search-query" name="query" value="" placeholder="Let's explore!">
+      <button class="btn" id="searchbutton" name="button" value="click" onClick="jump(this.form);return false;">
+	<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+      </button>
+    </form>
+  </div>
+</div>
 {% endblock %}
 
 
@@ -11,6 +56,7 @@
 <script src="/static/Detector.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+
 <script>
 
 //--------------- WEBGL ---------------
@@ -48,9 +94,6 @@ animate();
 startAttenuation();
 
 function init() {
-  container = document.createElement( 'div' );
-  document.body.appendChild( container );
-
   // CAMERA
 
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -88,7 +131,7 @@ function init() {
   renderer.setClearColor( scene.fog.color );
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
-  container.appendChild( renderer.domElement );
+  document.getElementById("viewArea").appendChild( renderer.domElement );
 
   // ORBITCONTROLS
 
@@ -146,7 +189,7 @@ function createText() {
     var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
     sphereMesh = new THREE.Mesh( sphereGeo, smaterial );
-    sphereMesh.position.x = centerOffset + ({{ cell['x'] }}/scale);
+    sphereMesh.position.x = ({{ cell['x'] }}/scale);
     sphereMesh.position.y = hover + ({{ cell['y'] }}/scale);
     sphereMesh.position.z = 0 + ({{ cell['z'] }}/scale);
 
@@ -205,6 +248,20 @@ function render() {
   renderer.render( scene, camera );
 }
 
+//--------------- SEARCH ---------------
+function jump(form){
+  var query = form.query.value;
+  {% for cell in cells %}
+    if ("{{ cell['name'] }}" == query) {
+      tx = {{cell['x']}}/scale;
+      ty = {{cell['y']}}/scale;
+      tz = {{cell['z']}}/scale;
+      camera.position.set(tx + 5, ty + 5, tz + 5);
+      queryTarget = new THREE.Vector3( tx, ty, tz );
+      camera.lookAt( cameraTarget );
+    }
+  {% endfor %}
+}
 
 //--------------- ATTENUATION ---------------
 function attenuate(){

@@ -57,3 +57,17 @@ Then, run the test code to fire cells.
 ```
 $ python post_test.py
 ```
+
+##Runtime Options
+
+###Rate of aborting requests
+
+Too many requests cause a severe delay.
+
+So, by default, 99% of requests are aborted.
+
+You can change the rate by setting '--abortrate' option. (Default: XX->99)
+
+```
+$ python server.py --abortrate XX
+```

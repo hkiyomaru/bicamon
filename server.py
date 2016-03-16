@@ -60,7 +60,7 @@ def api():
         socketio.emit('activation', data_index)
         return "Request was sended.\n"
     else:
-        return "Invalid access.\n"
+        return "Request was aborted.\n"
 
 if __name__ == '__main__':
     app.debug = True

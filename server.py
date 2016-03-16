@@ -2,11 +2,14 @@ import sqlite3
 from flask import Flask, render_template, g, request
 from flask.ext.socketio import SocketIO, send, emit
 import math
+import argparse
+import random
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mouse-brain-visualization'
 socketio = SocketIO(app)
 DATABASE = 'db/cells.db'
+abortrate = 100
 
 # ----------- DB -----------
 def get_db():
@@ -50,7 +53,7 @@ def index():
 
 @app.route('/api', methods=['GET', 'POST'])
 def api():
-    if request.method == 'POST':
+    if request.method == 'POST' and random.randint(0, 100) < abortrate:
         data =  request.json
         data_index = []
         for d in data["cells"]:
@@ -63,5 +66,12 @@ def api():
         return "Request was aborted.\n"
 
 if __name__ == '__main__':
+    #Setup abortrate
+    global abortrate
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--abortrate', dest='abortrate', default=100, type=int)
+    abortrate = parser.parse_args().abortrate
+    
+    #Run
     app.debug = True
     socketio.run(app)

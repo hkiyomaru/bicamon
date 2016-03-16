@@ -63,7 +63,9 @@ function init() {
   ] );
 
   group = new THREE.Group();
-  group.position.y = 100;
+  group.position.x = -7661/scale;
+  group.position.y = -4194/scale;
+  group.position.z = -6957/scale;
 
   // AXIS HELPER
   var axisHelper = new THREE.AxisHelper( 10000 );
@@ -172,7 +174,7 @@ function createText() {
     //line geometry
     lineGeo = new THREE.Geometry();
     
-    lineGeo.vertices.push(new THREE.Vector3({{link["root"]["x"]}}/scale - scale*2, {{link["root"]["y"]}}/scale, {{link["root"]["z"]}}/scale ));
+    lineGeo.vertices.push(new THREE.Vector3({{link["root"]["x"]}}/scale - scale*3, {{link["root"]["y"]}}/scale, {{link["root"]["z"]}}/scale ));
     lineGeo.vertices.push(new THREE.Vector3({{link["dest"]["x"]}}/scale, {{link["dest"]["y"]}}/scale, {{link["dest"]["z"]}}/scale ));
 
     line = new THREE.Line(lineGeo, lmaterial);
@@ -223,7 +225,7 @@ function attenuate(){
 }
 
 function startAttenuation(){
-  interval = 100;
+  interval = 50;
   setInterval("attenuate()", interval);
 }
 
@@ -234,12 +236,12 @@ socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
     index = data[i];
     if (sphereMaterials[index].color.getHSL()["l"] < 0.7) {
-      sphereMaterials[index].color.offsetHSL(0, 0, 0.3);
+      sphereMaterials[index].color.offsetHSL(0, 0, 0.2);
     }
     if (index in lineMaterials){
       for(var j=0; j<lineMaterials[index].length; j++){
         if (lineMaterials[index][j].color.getHSL()["l"] < 0.7) {
-          lineMaterials[index][j].color.offsetHSL(0, 0, 0.3);
+          lineMaterials[index][j].color.offsetHSL(0, 0, 0.1);
         }
       }
     }

@@ -256,6 +256,12 @@ function restore(){
     textMeshes[key].material.opacity = 1.0;
     textMeshes[key].material.transparent = false;
   }
+  {% for link in links %}
+    for (var i=0; i<lineMaterials["{{ link['root']['name'] }}"].length; i++){
+      lineMaterials["{{ link['root']['name'] }}"][i].opacity = 0.15;
+      lineMaterials["{{ link['root']['name'] }}"][i].visible = true;
+    }
+  {% endfor %}
 }
 
 function search(form){
@@ -267,7 +273,17 @@ function search(form){
       sphereMaterials[key].transparent = true;
       textMeshes[key].material.opacity = 0.0;
       textMeshes[key].material.transparent = true;
+      if (key in lineMaterials){
+        for(var i=0; i<lineMaterials[key].length; i++){
+          lineMaterials[key][i].visible = false;
+        }
+      }
     }else{
+      if (key in lineMaterials){
+        for(var i=0; i<lineMaterials[key].length; i++){
+          lineMaterials[key][i].opacity = 1.0;
+        }
+      }
       count++;
     }
   }
@@ -302,14 +318,14 @@ function startAttenuation(){
 var socket = io.connect('http://' + document.domain + ':' + location.port)
 socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
-    index = data[i];
-    if (sphereMaterials[index].color.getHSL()["l"] < 0.7) {
-      sphereMaterials[index].color.offsetHSL(0, 0, 0.2);
+    name = data[i];
+    if (sphereMaterials[name].color.getHSL()["l"] < 0.7) {
+      sphereMaterials[name].color.offsetHSL(0, 0, 0.2);
     }
-    if (index in lineMaterials){
-      for(var j=0; j<lineMaterials[index].length; j++){
-        if (lineMaterials[index][j].color.getHSL()["l"] < 0.7) {
-          lineMaterials[index][j].color.offsetHSL(0, 0, 0.1);
+    if (name in lineMaterials){
+      for(var j=0; j<lineMaterials[name].length; j++){
+        if (lineMaterials[name][j].color.getHSL()["l"] < 0.7) {
+          lineMaterials[name][j].color.offsetHSL(0, 0, 0.1);
         }
       }
     }

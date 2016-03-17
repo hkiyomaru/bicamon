@@ -83,7 +83,7 @@ def api():
 if __name__ == '__main__':
     #Setup abortrate
     parser = argparse.ArgumentParser()
-    parser.add_argument('--abortrate', dest='abortrate', default=99, type=int)
+    parser.add_argument('--abortrate', dest='abortrate', default=0, type=int)
     abortrate = parser.parse_args().abortrate
     
     #Run

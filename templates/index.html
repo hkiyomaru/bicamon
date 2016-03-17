@@ -7,23 +7,25 @@
   position: relative;
 }
 #viewArea{
-  z-index: 1;
 }
-<!-- .toolBox{ -->
-<!--   width: 300px; -->
-<!--   height: 120px; -->
-<!--   position: absolute; -->
-<!--   top: 10px; -->
-<!--   right: 10px; -->
-<!--   text-align: center; -->
-<!--   z-index: 2; -->
-<!-- } -->
+.toolBox{
+  width: 350px;
+  height: 100px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  text-align: center;
+}
 #searchbox{
   background-color: rgba(100, 100, 100, 0.5);
   border: None;
 }
 #searchbutton{
   background-color: rgba(50, 50, 50, 0.8);
+  color: rgba(200, 200, 200, 0.8);
+}
+#restorebutton{
+  background-color: rgba(100, 50, 50, 0.8);
   color: rgba(200, 200, 200, 0.8);
 }
 </style>
@@ -33,14 +35,17 @@
 {% block main %}
 <div class="wrapper">
   <div id="viewArea"></div>
-  <!-- <div class="toolBox"> -->
-  <!--   <form class="well form-search" id="searchbox"> -->
-  <!--     <input type="text" class="input-medium search-query" name="query" value="" placeholder="Let's explore!"> -->
-  <!--     <button class="btn" id="searchbutton" name="button" value="click" onClick="jump(this.form);return false;"> -->
-  <!-- 	<span class="glyphicon glyphicon-search" aria-hidden="true"></span> -->
-  <!--     </button> -->
-  <!--   </form> -->
-  <!-- </div> -->
+  <div class="toolBox">
+    <form class="well form-search" id="searchbox">
+      <input type="text" class="input-medium search-query" name="query" value="" placeholder="Let's explore!">
+      <button class="btn" id="searchbutton" name="button" value="click" onClick="search(this.form);return false;">
+  	<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+      </button>
+      <button class="btn" id="restorebutton" name="button" value="click" onClick="restore();return false;">
+  	<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+      </button>
+    </form>
+  </div>
 </div>
 {% endblock %}
 
@@ -238,17 +243,35 @@ function render() {
 }
 
 //--------------- SEARCH ---------------
-function jump(form){
-  query = form.query.value;
-  if (query in textMeshes){
-    var tx = textMeshes[query].position.x;
-    var ty = textMeshes[query].position.y;
-    var tz = textMeshes[query].position.z;
-    queryTarget = new THREE.Vector3(tx, ty, tz);
-    camera.position.set(tx + 5, ty + 5, tz + 5);
-    camera.lookAt( queryTarget );
-  }else{
-    console.log("Search failed.");
+$(".toolBox").hover(
+  function(){
+    controls.enabled = false;
+  },
+  function(){
+    controls.enabled = true;
+  }
+);
+
+function restore(){
+  for (var key in sphereMaterials){
+    sphereMaterials[key].opacity = 1.0;
+    sphereMaterials[key].transparent = false;
+  }
+}
+
+function search(form){
+  var query = form.query.value;
+  var count = 0;
+  for (var key in sphereMaterials){
+    if (key.indexOf(query) != 0){
+      sphereMaterials[key].opacity = 0.30;
+      sphereMaterials[key].transparent = true;
+    }else{
+      count++;
+    }
+  }
+  if (!count){
+    restore();
   }
 }
 

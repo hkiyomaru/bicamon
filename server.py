@@ -53,7 +53,7 @@ def index():
     # Set data
     for cellname in cellnames:
         name = cellname["name"]
-        send_cells[name] = query_db('select region,voxel,x,y,z from cells where name="%s"' % name)[0]
+        send_cells[name] = query_db('select fullname,region,voxel,x,y,z from cells where name="%s"' % name)[0]
     for link in links:
         root_coordinate = query_db('select name,x,y,z from cells where name="%s"' % link["root"])
         dest_coordinate = query_db('select name,x,y,z from cells where name="%s"' % link["dest"])

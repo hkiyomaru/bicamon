@@ -5,13 +5,17 @@ import math
 import argparse
 import random
 
+
+# Global variables
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mouse-brain-visualization'
 socketio = SocketIO(app)
+
 DATABASE = 'db/cells.db'
 abortrate = 0
 
-# ----------- DB -----------
+
+# Database Functions
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -34,37 +38,48 @@ def query_db(query, args=(), one=False):
     cur.close()
     return (rv[0] if rv else None) if one else rv
 
-# ----------- Routing -----------
+
+# Routing Functions
 @app.route('/')
 def index():
-    cells = query_db('select * from cells')
+    # Get data from database
+    cellnames = query_db('select name from cells')
     links = query_db('select * from links')
-    valid_links = []
+
+    # Data to send to view
+    send_cells = {}
+    send_links = []
+    
+    # Set data
+    for cellname in cellnames:
+        name = cellname["name"]
+        send_cells[name] = query_db('select region,voxel,x,y,z from cells where name="%s"' % name)[0]
     for link in links:
-        root_coordinate = query_db('select id,x,y,z from cells where name="%s"' % link["root"])
-        dest_coordinate = query_db('select id,x,y,z from cells where name="%s"' % link["dest"])
+        root_coordinate = query_db('select name,x,y,z from cells where name="%s"' % link["root"])
+        dest_coordinate = query_db('select name,x,y,z from cells where name="%s"' % link["dest"])
         if len(root_coordinate) != 0 and len(dest_coordinate) != 0:
             link_dict = {}
             link_dict["root"] = root_coordinate[0]
             link_dict["dest"] = dest_coordinate[0]
             link_dict["weight"] = link["weight"]
-            valid_links.append(link_dict)
-    return render_template('index.html', cells=cells, links=valid_links)
+            send_links.append(link_dict)
+    return render_template('index.html', cells=send_cells, links=send_links)
 
 @app.route('/api', methods=['GET', 'POST'])
 def api():
     if request.method == 'POST' and random.randint(0, 100) > abortrate:
         data =  request.json
-        data_index = []
+        data_name = []
         for d in data["cells"]:
-            index = query_db('select id from cells where name="%s"' % d)
-            if len(index) != 0:
-                data_index.append(index[0]["id"])
-        socketio.emit('activation', data_index)
+            name = query_db('select name from cells where name="%s"' % d)
+            if len(name) != 0:
+                data_name.append(name[0]["name"])
+        socketio.emit('activation', data_name)
         return "Request was sended.\n"
     else:
         return "Request was aborted.\n"
 
+# Main process
 if __name__ == '__main__':
     #Setup abortrate
     parser = argparse.ArgumentParser()

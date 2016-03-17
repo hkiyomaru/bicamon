@@ -2,50 +2,45 @@
 
 
 {% block extracss %}
-
 <style>
 .wrapper{
   position: relative;
 }
-
 #viewArea{
+  z-index: 1;
 }
-
-.toolBox{
-  width: 300px;
-  height: 120px;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  text-align: center;
-}
-
+<!-- .toolBox{ -->
+<!--   width: 300px; -->
+<!--   height: 120px; -->
+<!--   position: absolute; -->
+<!--   top: 10px; -->
+<!--   right: 10px; -->
+<!--   text-align: center; -->
+<!--   z-index: 2; -->
+<!-- } -->
 #searchbox{
   background-color: rgba(100, 100, 100, 0.5);
   border: None;
 }
-
 #searchbutton{
   background-color: rgba(50, 50, 50, 0.8);
   color: rgba(200, 200, 200, 0.8);
 }
-
 </style>
-
 {% endblock %}
 
 
 {% block main %}
 <div class="wrapper">
   <div id="viewArea"></div>
-  <div class="toolBox">
-    <form class="well form-search" id="searchbox">
-      <input type="text" class="input-medium search-query" name="query" value="" placeholder="Let's explore!">
-      <button class="btn" id="searchbutton" name="button" value="click" onClick="jump(this.form);return false;">
-	<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-      </button>
-    </form>
-  </div>
+  <!-- <div class="toolBox"> -->
+  <!--   <form class="well form-search" id="searchbox"> -->
+  <!--     <input type="text" class="input-medium search-query" name="query" value="" placeholder="Let's explore!"> -->
+  <!--     <button class="btn" id="searchbutton" name="button" value="click" onClick="jump(this.form);return false;"> -->
+  <!-- 	<span class="glyphicon glyphicon-search" aria-hidden="true"></span> -->
+  <!--     </button> -->
+  <!--   </form> -->
+  <!-- </div> -->
 </div>
 {% endblock %}
 
@@ -71,7 +66,7 @@ var scale = 2.5;
 
 var sphereMaterials = {};
 var lineMaterials = {};
-var textMeshes = [];
+var textMeshes = {};
 
 var firstLetter = true;
 
@@ -95,15 +90,12 @@ startAttenuation();
 
 function init() {
   // CAMERA
-
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
   camera.position.set( 4000, 400, 1500 );
-
   cameraTarget = new THREE.Vector3( 0, 0, 0 );
   camera.lookAt( cameraTarget );
 
   // SCENE
-
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog( 0x222222, 150, 12000 );
 
@@ -126,7 +118,6 @@ function init() {
   loadFont();
 
   // RENDERER
-
   renderer = new THREE.WebGLRenderer( { antialias: true } );
   renderer.setClearColor( scene.fog.color );
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -134,9 +125,9 @@ function init() {
   document.getElementById("viewArea").appendChild( renderer.domElement );
 
   // ORBITCONTROLS
-
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls = new THREE.OrbitControls(camera);
   controls.maxDistance = 10000;
+  controls.minDistance = 0;
 
   window.addEventListener( 'resize', onWindowResize, false );
 }
@@ -154,24 +145,23 @@ function onWindowResize() {
 function loadFont() {
   var loader = new THREE.FontLoader();
   loader.load( '/static/helvetiker_regular.typeface.js', function ( response ) {
-  font = response;
-  createText();
-} );
-
+    font = response;
+    createText();
+  });
 }
 
 function createText() {
   <!-- MeshCreate -->
-  {% for cell in cells %}
+  {% for key,value in cells.iteritems() %}
     //sphere material
     smaterial = new THREE.MeshLambertMaterial({ color: 0x330000 });
 
     //sphere geometry
-    radius = (Math.sqrt({{ cell["voxel"] }} / Math.PI)) * 2.3;
+    radius = (Math.sqrt({{ value["voxel"] }} / Math.PI)) * 2.3;
     sphereGeo = new THREE.SphereGeometry(radius);
 
     //text geometry
-    textGeo = new THREE.TextGeometry( "{{ cell['name'] }}", {
+    textGeo = new THREE.TextGeometry( "{{ key }}", {
       font: font,
       size: size,
       height: height,
@@ -189,21 +179,21 @@ function createText() {
     var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
     sphereMesh = new THREE.Mesh( sphereGeo, smaterial );
-    sphereMesh.position.x = ({{ cell['x'] }}/scale);
-    sphereMesh.position.y = hover + ({{ cell['y'] }}/scale);
-    sphereMesh.position.z = 0 + ({{ cell['z'] }}/scale);
+    sphereMesh.position.x = ({{ value['x'] }}/scale);
+    sphereMesh.position.y = hover + ({{ value['y'] }}/scale);
+    sphereMesh.position.z = 0 + ({{ value['z'] }}/scale);
 
     textMesh = new THREE.Mesh( textGeo, material );
 
-    textMesh.position.x = centerOffset - radius/2 + ({{ cell['x'] }}/scale);
-    textMesh.position.y = hover + radius + ({{ cell['y'] }}/scale);
-    textMesh.position.z = 0 + ({{ cell['z'] }}/scale);
+    textMesh.position.x = centerOffset - radius/2 + ({{ value['x'] }}/scale);
+    textMesh.position.y = hover + radius + ({{ value['y'] }}/scale);
+    textMesh.position.z = 0 + ({{ value['z'] }}/scale);
 
     textMesh.rotation.x = 0;
     textMesh.rotation.y = Math.PI * 2;
 
-    sphereMaterials[{{ cell['id'] }}] = smaterial;
-    textMeshes.push(textMesh);
+    sphereMaterials["{{ key }}"] = smaterial;
+    textMeshes["{{ key }}"] = textMesh;
 
     group.add( sphereMesh );
     group.add( textMesh );
@@ -217,16 +207,16 @@ function createText() {
     //line geometry
     lineGeo = new THREE.Geometry();
     
-    lineGeo.vertices.push(new THREE.Vector3({{link["root"]["x"]}}/scale - scale*3, {{link["root"]["y"]}}/scale, {{link["root"]["z"]}}/scale ));
-    lineGeo.vertices.push(new THREE.Vector3({{link["dest"]["x"]}}/scale, {{link["dest"]["y"]}}/scale, {{link["dest"]["z"]}}/scale ));
+    lineGeo.vertices.push(new THREE.Vector3({{ link["root"]["x"] }}/scale - scale*3, {{ link["root"]["y"] }}/scale, {{ link["root"]["z"] }}/scale ));
+    lineGeo.vertices.push(new THREE.Vector3({{ link["dest"]["x"] }}/scale, {{ link["dest"]["y"] }}/scale, {{ link["dest"]["z"] }}/scale ));
 
     line = new THREE.Line(lineGeo, lmaterial);
 
-    if (!({{ link['root']['id'] }} in lineMaterials)){
-      lineMaterials[{{ link['root']['id'] }}] = [];
+    if (!("{{ link['root']['name'] }}" in lineMaterials)){
+      lineMaterials["{{ link['root']['name'] }}"] = [];
     }
 
-    lineMaterials[{{ link['root']['id'] }}].push(lmaterial);
+    lineMaterials["{{ link['root']['name'] }}"].push(lmaterial);
     
     group.add( line );
 
@@ -237,12 +227,11 @@ function animate() {
   requestAnimationFrame( animate );
   render();
   controls.update();
-
 }
 
 function render() {
-  for(var i = 0; i < textMeshes.length; ++i){
-    textMeshes[i].rotation.setFromRotationMatrix( camera.matrix );
+  for (var key in textMeshes){
+    textMeshes[key].rotation.setFromRotationMatrix( camera.matrix );
   }
   renderer.clear();
   renderer.render( scene, camera );
@@ -250,17 +239,17 @@ function render() {
 
 //--------------- SEARCH ---------------
 function jump(form){
-  var query = form.query.value;
-  {% for cell in cells %}
-    if ("{{ cell['name'] }}" == query) {
-      tx = {{cell['x']}}/scale;
-      ty = {{cell['y']}}/scale;
-      tz = {{cell['z']}}/scale;
-      camera.position.set(tx + 5, ty + 5, tz + 5);
-      queryTarget = new THREE.Vector3( tx, ty, tz );
-      camera.lookAt( cameraTarget );
-    }
-  {% endfor %}
+  query = form.query.value;
+  if (query in textMeshes){
+    var tx = textMeshes[query].position.x;
+    var ty = textMeshes[query].position.y;
+    var tz = textMeshes[query].position.z;
+    queryTarget = new THREE.Vector3(tx, ty, tz);
+    camera.position.set(tx + 5, ty + 5, tz + 5);
+    camera.lookAt( queryTarget );
+  }else{
+    console.log("Search failed.");
+  }
 }
 
 //--------------- ATTENUATION ---------------
@@ -286,7 +275,6 @@ function startAttenuation(){
 }
 
 //--------------- WEBSOCKET ---------------
-
 var socket = io.connect('http://' + document.domain + ':' + location.port)
 socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){

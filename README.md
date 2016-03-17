@@ -64,9 +64,9 @@ $ python post_test.py
 
 Too many requests cause a severe delay.
 
-So, by default, 99% of requests are aborted.
+You can change the rate by setting '--abortrate' option.
 
-You can change the rate by setting '--abortrate' option. (Default: XX->99)
+By default, XX is 0.
 
 ```
 $ python server.py --abortrate XX

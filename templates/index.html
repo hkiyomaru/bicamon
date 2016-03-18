@@ -149,15 +149,10 @@ function init() {
   var ambient = new THREE.AmbientLight(0xffffff);
   scene.add(ambient);
 
-  var axis = new THREE.AxisHelper(1000);   
-  //sceneに追加
-  scene.add(axis);
-
   group = new THREE.Group();
-  group.rotation.z = Math.PI;
   group.position.x = 7661/scale;
   group.position.y = 4194/scale;
-  group.position.z = -6957/scale;
+  group.position.z = 6957/scale;
 
   scene.add( group );
 
@@ -229,15 +224,15 @@ function createText() {
     var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
     sphereMesh = new THREE.Mesh( sphereGeo, smaterial );
-    sphereMesh.position.x = ({{ value['x'] }}/scale);
-    sphereMesh.position.y = hover + ({{ value['y'] }}/scale);
-    sphereMesh.position.z = 0 + ({{ value['z'] }}/scale);
+    sphereMesh.position.x = -({{ value['x'] }}/scale);
+    sphereMesh.position.y = hover - ({{ value['y'] }}/scale);
+    sphereMesh.position.z = 0 - ({{ value['z'] }}/scale);
 
     textMesh = new THREE.Mesh( textGeo, material );
 
-    textMesh.position.x = centerOffset - radius/2 + ({{ value['x'] }}/scale);
-    textMesh.position.y = hover + radius + ({{ value['y'] }}/scale);
-    textMesh.position.z = 0 + ({{ value['z'] }}/scale);
+    textMesh.position.x = centerOffset - radius/2 - ({{ value['x'] }}/scale);
+    textMesh.position.y = hover + radius - ({{ value['y'] }}/scale);
+    textMesh.position.z = 0 - ({{ value['z'] }}/scale);
 
     textMesh.rotation.x = 0;
     textMesh.rotation.y = Math.PI * 2;
@@ -257,8 +252,8 @@ function createText() {
     //line geometry
     lineGeo = new THREE.Geometry();
     
-    lineGeo.vertices.push(new THREE.Vector3({{ link["root"]["x"] }}/scale - scale*3, {{ link["root"]["y"] }}/scale, {{ link["root"]["z"] }}/scale ));
-    lineGeo.vertices.push(new THREE.Vector3({{ link["dest"]["x"] }}/scale, {{ link["dest"]["y"] }}/scale, {{ link["dest"]["z"] }}/scale ));
+    lineGeo.vertices.push(new THREE.Vector3(-{{ link["root"]["x"] }}/scale - scale*3, -{{ link["root"]["y"] }}/scale, -{{ link["root"]["z"] }}/scale ));
+    lineGeo.vertices.push(new THREE.Vector3(-{{ link["dest"]["x"] }}/scale, -{{ link["dest"]["y"] }}/scale, -{{ link["dest"]["z"] }}/scale ));
 
     line = new THREE.Line(lineGeo, lmaterial);
 

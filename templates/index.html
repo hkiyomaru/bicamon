@@ -308,23 +308,25 @@ function restore(){
 }
 
 function search(form){
-  restore();
   var query = form.query.value;
-  for (var key in sphereMaterials){
-    if (key.indexOf(query) != 0){
-      sphereMaterials[key].opacity = 0.25;
-      sphereMaterials[key].transparent = true;
-      textMeshes[key].material.opacity = 0.0;
-      textMeshes[key].material.transparent = true;
-      if (key in lineMaterials){
-        for(var i=0; i<lineMaterials[key].length; i++){
-          lineMaterials[key][i].visible = false;
+  if (query != ""){
+    restore();
+    for (var key in sphereMaterials){
+      if (key.indexOf(query) != 0){
+        sphereMaterials[key].opacity = 0.25;
+        sphereMaterials[key].transparent = true;
+        textMeshes[key].material.opacity = 0.0;
+        textMeshes[key].material.transparent = true;
+        if (key in lineMaterials){
+          for(var i=0; i<lineMaterials[key].length; i++){
+            lineMaterials[key][i].visible = false;
+          }
         }
-      }
-    }else{
-      if (key in lineMaterials){
-        for(var i=0; i<lineMaterials[key].length; i++){
-          lineMaterials[key][i].opacity = 1.0;
+      }else{
+        if (key in lineMaterials){
+          for(var i=0; i<lineMaterials[key].length; i++){
+            lineMaterials[key][i].opacity = 1.0;
+          }
         }
       }
     }

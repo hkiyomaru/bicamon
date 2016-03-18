@@ -45,7 +45,7 @@ def index():
     # Get data from database
     cellnames = query_db('select name from cells')
     links = query_db('select * from links')
-
+    
     # Data to send to view
     send_cells = {}
     send_links = []
@@ -54,15 +54,12 @@ def index():
     for cellname in cellnames:
         name = cellname["name"]
         send_cells[name] = query_db('select fullname,region,voxel,x,y,z from cells where name="%s"' % name)[0]
+
     for link in links:
-        root_coordinate = query_db('select name,x,y,z from cells where name="%s"' % link["root"])
-        dest_coordinate = query_db('select name,x,y,z from cells where name="%s"' % link["dest"])
+        root_coordinate = query_db('select * from cells where name="%s"' % link["root"])
+        dest_coordinate = query_db('select * from cells where name="%s"' % link["dest"])
         if len(root_coordinate) != 0 and len(dest_coordinate) != 0:
-            link_dict = {}
-            link_dict["root"] = root_coordinate[0]
-            link_dict["dest"] = dest_coordinate[0]
-            link_dict["weight"] = link["weight"]
-            send_links.append(link_dict)
+            send_links.append(link)
     return render_template('index.html', cells=send_cells, links=send_links)
 
 @app.route('/api', methods=['GET', 'POST'])

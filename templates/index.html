@@ -344,8 +344,8 @@ function attenuate(){
       if (brightness > 0.12) {
         sphereMaterials[key].color.offsetHSL(0, 0, brightness * attenuation_rate);
         if (key in lineMaterials){
-          for(var i=0; i<lineMaterials[name].length; i++){
-            lineMaterials[name][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
+          for(var i=0; i<lineMaterials[key].length; i++){
+            lineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
           }
         }
       }
@@ -375,9 +375,7 @@ socket.on('activation', function(data){
       sphereMaterials[name].color.offsetHSL(0, 0, 0.2);
       if (name in lineMaterials){
         for(var j=0; j<lineMaterials[name].length; j++){
-          if (lineMaterials[name][i].color.getHSL()["l"] < 0.7){
-            lineMaterials[name][j].color.offsetHSL(0, 0, 0.2);
-          }
+	  lineMaterials[name][j].color.offsetHSL(0, 0, 0.2);
         }
       }
     }

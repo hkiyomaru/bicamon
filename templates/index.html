@@ -63,6 +63,47 @@
 
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
+var colorList = {};
+colorList["Cerebellar Cortex"] = function(){
+  return 0xFF69B4;
+};
+colorList["Cerebellar Nuclei"] = function(){
+  return 0xFF69B4;
+};
+colorList["Cortical Subplate"] = function(){
+  return 0xA9A9A9;
+};
+colorList["Hippocampal Formation"] = function(){
+  return 0x000033;
+};
+colorList["Hypothalamus"] = function(){
+  return 0xFFA500;
+};
+colorList["Isocortex"] = function(){
+  return 0x330000;
+};
+colorList["Medulla"] = function(){
+  return 0xA9A9A9;
+};
+colorList["Midbrain"] = function(){
+  return 0x000080;
+};
+colorList["Olfactory Areas"] = function(){
+  return 0x800000;
+};
+colorList["Pallidum"] = function(){
+  return 0xA9A9A9;
+};
+colorList["Pons"] = function(){
+  return 0xA9A9A9;
+};
+colorList["Striatum"] = function(){
+  return 0xFFD700;
+};
+colorList["Thalamus"] = function(){
+  return 0xA9A9A9;
+};
+
 THREE.Cache.enabled = true;
 var container, controls, color;
 var camera, cameraTarget, scene, renderer;
@@ -108,9 +149,14 @@ function init() {
   var ambient = new THREE.AmbientLight(0xffffff);
   scene.add(ambient);
 
+  var axis = new THREE.AxisHelper(1000);   
+  //sceneに追加
+  scene.add(axis);
+
   group = new THREE.Group();
-  group.position.x = -7661/scale;
-  group.position.y = -4194/scale;
+  group.rotation.z = Math.PI;
+  group.position.x = 7661/scale;
+  group.position.y = 4194/scale;
   group.position.z = -6957/scale;
 
   scene.add( group );
@@ -156,10 +202,12 @@ function createText() {
     //text material
     material = new THREE.MeshBasicMaterial({color: 0xcccccc});
     //sphere material
-    smaterial = new THREE.MeshLambertMaterial({ color: 0x330000 });
+    //smaterial = new THREE.MeshLambertMaterial({ color: 0x330000 });
+    smaterial = new THREE.MeshLambertMaterial({ color: colorList["{{ value['region'] }}"]() });
+
 
     //sphere geometry
-    radius = (Math.sqrt({{ value["voxel"] }} / Math.PI)) * 2.3;
+    radius = (Math.sqrt("{{ value['voxel'] }}" / Math.PI)) * 2.3;
     sphereGeo = new THREE.SphereGeometry(radius);
 
     //text geometry
@@ -265,8 +313,8 @@ function restore(){
 }
 
 function search(form){
+  restore();
   var query = form.query.value;
-  var count = 0;
   for (var key in sphereMaterials){
     if (key.indexOf(query) != 0){
       sphereMaterials[key].opacity = 0.25;
@@ -284,11 +332,7 @@ function search(form){
           lineMaterials[key][i].opacity = 1.0;
         }
       }
-      count++;
     }
-  }
-  if (!count){
-    restore();
   }
 }
 

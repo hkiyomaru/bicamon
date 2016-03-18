@@ -28,6 +28,29 @@
   background-color: rgba(100, 50, 50, 0.8);
   color: rgba(200, 200, 200, 0.8);
 }
+#deldetailbutton{
+  background-color: rgba(50, 50, 100, 0.8);
+  color: rgba(200, 200, 200, 0.8);
+}
+#detailBox{
+  width: 350px;
+  height: auto;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  border: None;
+  background-color: rgba(100, 100, 100, 0.5);
+  font-size: 20px;
+  color: rgba(30, 30, 30, 0.5);
+}
+.list-group{
+  margin-top: 25px;
+}
+.list-group-item{
+  background-color: rgba(50, 50, 50, 0.8);
+  color: rgba(200, 200, 200, 0.8);
+  border-color: rgba(40, 40, 40, 0.5);
+}
 </style>
 {% endblock %}
 
@@ -44,7 +67,14 @@
       <button class="btn" id="restorebutton" name="button" value="click" onClick="restore();return false;">
   	<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
       </button>
+      <button class="btn" id="deldetailbutton" name="button" value="click" onClick="switchDetail();return false;">
+	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+      </button>
     </form>
+  </div>
+  <div class="well" id="detailBox" style="visibility: hidden;">
+    <ul class="list-group" id="detail-list">
+    </ul>
   </div>
 </div>
 {% endblock %}
@@ -114,7 +144,7 @@ var sphereMaterials = {};
 var lineMaterials = {};
 var textMeshes = {};
 var brightness_count = {};
-
+var details = {};
 var firstLetter = true;
 
 var text,
@@ -195,6 +225,10 @@ function loadWorld() {
 function createElements() {
   <!-- MeshCreate -->
   {% for key,value in cells.iteritems() %}
+    //set details
+    detail = {fullname: "{{ value['fullname'] }}", region: "{{ value['region'] }}"};
+    details["{{ key }}"] = detail;
+
     //set brightness
     brightness_count["{{ key }}"] = 0;
 
@@ -294,6 +328,50 @@ $(".toolBox").hover(
   }
 );
 
+$("#detailBox").hover(
+  function(){
+    controls.enabled = false;
+  },
+  function(){
+    controls.enabled = true;
+  }
+);
+
+function addDetail(name, fullname, region){
+  var ul_element = document.createElement("li");
+  ul_element.classList.add("list-group-item");
+  ul_element.classList.add("result");
+  ul_element.innerHTML = name + " : " + fullname + " (" + region + ")";
+  var parent_object = document.getElementById("detail-list");
+  parent_object.appendChild(ul_element);
+}
+
+function hideDetail(){
+  detailBox = document.getElementById("detailBox");
+  detailBox.style.visibility = "hidden";
+}
+
+function showDetail(){
+  detailBox = document.getElementById("detailBox");
+  detailBox.style.visibility = "visible";
+}
+
+function switchDetail(){
+  detailBox = document.getElementById("detailBox");
+  if (detailBox.style.visibility == "visible"){
+    hideDetail();
+  }else{
+    showDetail();
+  }
+}
+
+function clearDetail(){
+  //detailBox = document.getElementById("detailBox");
+  //while (detailBox.firstChild) {
+  //  detailBox.removeChild(detailBox.firstChild);
+  //}
+}
+
 function restore(){
   for (var key in sphereMaterials){
     sphereMaterials[key].opacity = 1.0;
@@ -313,6 +391,7 @@ function search(form){
   var query = form.query.value;
   if (query != ""){
     restore();
+    clearDetail();
     for (var key in sphereMaterials){
       if (key.indexOf(query) != 0){
         sphereMaterials[key].opacity = 0.25;
@@ -325,6 +404,8 @@ function search(form){
           }
         }
       }else{
+        addDetail(key, details[key]["fullname"], details[key]["region"]);
+        showDetail();
         if (key in lineMaterials){
           for(var i=0; i<lineMaterials[key].length; i++){
             lineMaterials[key][i].opacity = 1.0;

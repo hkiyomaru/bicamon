@@ -65,43 +65,43 @@ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 var colorList = {};
 colorList["Cerebellar Cortex"] = function(){
-  return 0xFF69B4;
+  return 0x3D001E;
 };
 colorList["Cerebellar Nuclei"] = function(){
-  return 0xFF69B4;
+  return 0x3D001E;
 };
 colorList["Cortical Subplate"] = function(){
-  return 0xA9A9A9;
+  return 0x1E1E1E;
 };
 colorList["Hippocampal Formation"] = function(){
-  return 0x000033;
+  return 0x00003D;
 };
 colorList["Hypothalamus"] = function(){
-  return 0xFFA500;
+  return 0x3D2600;
 };
 colorList["Isocortex"] = function(){
-  return 0x330000;
+  return 0x3D0000;
 };
 colorList["Medulla"] = function(){
-  return 0xA9A9A9;
+  return 0x1E1E1E;
 };
 colorList["Midbrain"] = function(){
-  return 0x000080;
+  return 0x003D3D;
 };
 colorList["Olfactory Areas"] = function(){
-  return 0x800000;
+  return 0x3D003D;
 };
 colorList["Pallidum"] = function(){
-  return 0xA9A9A9;
+  return 0x1E1E1E;
 };
 colorList["Pons"] = function(){
-  return 0xA9A9A9;
+  return 0x1E1E1E;
 };
 colorList["Striatum"] = function(){
-  return 0xFFD700;
+  return 0x3D3300;
 };
 colorList["Thalamus"] = function(){
-  return 0xA9A9A9;
+  return 0x1E1E1E;
 };
 
 THREE.Cache.enabled = true;
@@ -113,6 +113,7 @@ var scale = 2.5;
 var sphereMaterials = {};
 var lineMaterials = {};
 var textMeshes = {};
+var brightness_count = {};
 
 var firstLetter = true;
 
@@ -137,31 +138,26 @@ startAttenuation();
 function init() {
   // CAMERA
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
-  camera.position.set( 4000, 400, 1500 );
+  camera.position.set( -900, 3000, -2800 );
   cameraTarget = new THREE.Vector3( 0, 0, 0 );
   camera.lookAt( cameraTarget );
 
   // SCENE
   scene = new THREE.Scene();
-  scene.fog = new THREE.Fog( 0x222222, 150, 12000 );
+  scene.fog = new THREE.Fog( 0x161616, 150, 12000 );
 
   // LIGHTS
   var ambient = new THREE.AmbientLight(0xffffff);
   scene.add(ambient);
 
-  var axis = new THREE.AxisHelper(1000);   
-  //sceneに追加
-  scene.add(axis);
-
+  // RENDERING TARGET
   group = new THREE.Group();
-  group.rotation.z = Math.PI;
   group.position.x = 7661/scale;
   group.position.y = 4194/scale;
-  group.position.z = -6957/scale;
-
+  group.position.z = 6957/scale;
   scene.add( group );
 
-  loadFont();
+  loadWorld();
 
   // RENDERER
   renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -188,23 +184,24 @@ function onWindowResize() {
   renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
-function loadFont() {
+function loadWorld() {
   var loader = new THREE.FontLoader();
   loader.load( '/static/helvetiker_regular.typeface.js', function ( response ) {
     font = response;
-    createText();
+    createElements();
   });
 }
 
-function createText() {
+function createElements() {
   <!-- MeshCreate -->
   {% for key,value in cells.iteritems() %}
+    //set brightness
+    brightness_count["{{ key }}"] = 0;
+
     //text material
     material = new THREE.MeshBasicMaterial({color: 0xcccccc});
     //sphere material
-    //smaterial = new THREE.MeshLambertMaterial({ color: 0x330000 });
     smaterial = new THREE.MeshLambertMaterial({ color: colorList["{{ value['region'] }}"]() });
-
 
     //sphere geometry
     radius = (Math.sqrt("{{ value['voxel'] }}" / Math.PI)) * 2.3;
@@ -229,15 +226,15 @@ function createText() {
     var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
     sphereMesh = new THREE.Mesh( sphereGeo, smaterial );
-    sphereMesh.position.x = ({{ value['x'] }}/scale);
-    sphereMesh.position.y = hover + ({{ value['y'] }}/scale);
-    sphereMesh.position.z = 0 + ({{ value['z'] }}/scale);
+    sphereMesh.position.x = -({{ value['x'] }}/scale);
+    sphereMesh.position.y = hover - ({{ value['y'] }}/scale);
+    sphereMesh.position.z = 0 - ({{ value['z'] }}/scale);
 
     textMesh = new THREE.Mesh( textGeo, material );
 
-    textMesh.position.x = centerOffset - radius/2 + ({{ value['x'] }}/scale);
-    textMesh.position.y = hover + radius + ({{ value['y'] }}/scale);
-    textMesh.position.z = 0 + ({{ value['z'] }}/scale);
+    textMesh.position.x = centerOffset - radius/2 - ({{ value['x'] }}/scale);
+    textMesh.position.y = hover + radius - ({{ value['y'] }}/scale);
+    textMesh.position.z = 0 - ({{ value['z'] }}/scale);
 
     textMesh.rotation.x = 0;
     textMesh.rotation.y = Math.PI * 2;
@@ -257,16 +254,16 @@ function createText() {
     //line geometry
     lineGeo = new THREE.Geometry();
     
-    lineGeo.vertices.push(new THREE.Vector3({{ link["root"]["x"] }}/scale - scale*3, {{ link["root"]["y"] }}/scale, {{ link["root"]["z"] }}/scale ));
-    lineGeo.vertices.push(new THREE.Vector3({{ link["dest"]["x"] }}/scale, {{ link["dest"]["y"] }}/scale, {{ link["dest"]["z"] }}/scale ));
+    lineGeo.vertices.push(new THREE.Vector3(-{{ cells[link["root"]]["x"] }}/scale - (scale * 3), -{{ cells[link["root"]]["y"] }}/scale, -{{ cells[link["root"]]["z"] }}/scale ));
+    lineGeo.vertices.push(new THREE.Vector3(-{{ cells[link["dest"]]["x"] }}/scale - (scale * 3), -{{ cells[link["dest"]]["y"] }}/scale, -{{ cells[link["dest"]]["z"] }}/scale ));
 
     line = new THREE.Line(lineGeo, lmaterial);
 
-    if (!("{{ link['root']['name'] }}" in lineMaterials)){
-      lineMaterials["{{ link['root']['name'] }}"] = [];
+    if (!("{{ link['root'] }}" in lineMaterials)){
+      lineMaterials["{{ link['root'] }}"] = [];
     }
 
-    lineMaterials["{{ link['root']['name'] }}"].push(lmaterial);
+    lineMaterials["{{ link['root'] }}"].push(lmaterial);
     
     group.add( line );
 
@@ -305,31 +302,33 @@ function restore(){
     textMeshes[key].material.transparent = false;
   }
   {% for link in links %}
-    for (var i=0; i<lineMaterials["{{ link['root']['name'] }}"].length; i++){
-      lineMaterials["{{ link['root']['name'] }}"][i].opacity = 0.15;
-      lineMaterials["{{ link['root']['name'] }}"][i].visible = true;
+    for (var i=0; i<lineMaterials["{{ link['root'] }}"].length; i++){
+      lineMaterials["{{ link['root'] }}"][i].opacity = 0.15;
+      lineMaterials["{{ link['root'] }}"][i].visible = true;
     }
   {% endfor %}
 }
 
 function search(form){
-  restore();
   var query = form.query.value;
-  for (var key in sphereMaterials){
-    if (key.indexOf(query) != 0){
-      sphereMaterials[key].opacity = 0.25;
-      sphereMaterials[key].transparent = true;
-      textMeshes[key].material.opacity = 0.0;
-      textMeshes[key].material.transparent = true;
-      if (key in lineMaterials){
-        for(var i=0; i<lineMaterials[key].length; i++){
-          lineMaterials[key][i].visible = false;
+  if (query != ""){
+    restore();
+    for (var key in sphereMaterials){
+      if (key.indexOf(query) != 0){
+        sphereMaterials[key].opacity = 0.25;
+        sphereMaterials[key].transparent = true;
+        textMeshes[key].material.opacity = 0.0;
+        textMeshes[key].material.transparent = true;
+        if (key in lineMaterials){
+          for(var i=0; i<lineMaterials[key].length; i++){
+            lineMaterials[key][i].visible = false;
+          }
         }
-      }
-    }else{
-      if (key in lineMaterials){
-        for(var i=0; i<lineMaterials[key].length; i++){
-          lineMaterials[key][i].opacity = 1.0;
+      }else{
+        if (key in lineMaterials){
+          for(var i=0; i<lineMaterials[key].length; i++){
+            lineMaterials[key][i].opacity = 1.0;
+          }
         }
       }
     }
@@ -339,15 +338,23 @@ function search(form){
 //--------------- ATTENUATION ---------------
 function attenuate(){
   attenuation_rate = -0.05;
-  for (var key in sphereMaterials){
-    if (sphereMaterials[key].color.getHSL()["l"] > 0.12) {
-      sphereMaterials[key].color.offsetHSL(0, 0, attenuation_rate);
-    }
-  }
-  for (var key in lineMaterials){
-    for (var i=0; i<lineMaterials[key].length; i++) {
-      if (lineMaterials[key][i].color.getHSL()["l"] > 0.12) {
-        lineMaterials[key][i].color.offsetHSL(0, 0, attenuation_rate);
+  for (var key in brightness_count){
+    if (brightness_count[key] != 0){
+      brightness = sphereMaterials[key].color.getHSL()["l"];
+      if (brightness > 0.12) {
+        sphereMaterials[key].color.offsetHSL(0, 0, attenuation_rate);
+        if (key in lineMaterials){
+          for(var j=0; j<lineMaterials[name].length; j++){
+            lineMaterials[name][j].color.offsetHSL(0, 0, attenuation_rate);
+          }
+        }
+      }
+      if (brightness <= 0.12){
+        brightness_count[key] = 0;
+      } else if (brightness < 0.30){
+        brightness_count[key] = 1;
+      } else if (brightness < 0.50){
+        brightness_count[key] = 2;
       }
     }
   }
@@ -363,13 +370,12 @@ var socket = io.connect('http://' + document.domain + ':' + location.port)
 socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
     name = data[i];
-    if (sphereMaterials[name].color.getHSL()["l"] < 0.7) {
+    if (brightness_count[name] < 3){
+      brightness_count[name]++;
       sphereMaterials[name].color.offsetHSL(0, 0, 0.2);
-    }
-    if (name in lineMaterials){
-      for(var j=0; j<lineMaterials[name].length; j++){
-        if (lineMaterials[name][j].color.getHSL()["l"] < 0.7) {
-          lineMaterials[name][j].color.offsetHSL(0, 0, 0.1);
+      if (name in lineMaterials){
+        for(var j=0; j<lineMaterials[name].length; j++){
+          lineMaterials[name][j].color.offsetHSL(0, 0, 0.2);
         }
       }
     }

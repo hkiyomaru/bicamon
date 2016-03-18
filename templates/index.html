@@ -249,7 +249,7 @@ function createElements() {
 
   {% for link in links %}
     //line material
-    lmaterial = new THREE.LineBasicMaterial({ color: 0x003300, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
+    lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
 
     //line geometry
     lineGeo = new THREE.Geometry();
@@ -337,15 +337,15 @@ function search(form){
 
 //--------------- ATTENUATION ---------------
 function attenuate(){
-  attenuation_rate = -0.05;
+  attenuation_rate = -0.1;
   for (var key in brightness_count){
     if (brightness_count[key] != 0){
       brightness = sphereMaterials[key].color.getHSL()["l"];
       if (brightness > 0.12) {
-        sphereMaterials[key].color.offsetHSL(0, 0, attenuation_rate);
+        sphereMaterials[key].color.offsetHSL(0, 0, brightness * attenuation_rate);
         if (key in lineMaterials){
-          for(var j=0; j<lineMaterials[name].length; j++){
-            lineMaterials[name][j].color.offsetHSL(0, 0, attenuation_rate);
+          for(var i=0; i<lineMaterials[name].length; i++){
+            lineMaterials[name][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
           }
         }
       }
@@ -375,7 +375,9 @@ socket.on('activation', function(data){
       sphereMaterials[name].color.offsetHSL(0, 0, 0.2);
       if (name in lineMaterials){
         for(var j=0; j<lineMaterials[name].length; j++){
-          lineMaterials[name][j].color.offsetHSL(0, 0, 0.2);
+          if (lineMaterials[name][i].color.getHSL()["l"] < 0.7){
+            lineMaterials[name][j].color.offsetHSL(0, 0, 0.2);
+          }
         }
       }
     }

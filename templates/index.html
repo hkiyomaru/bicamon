@@ -343,10 +343,10 @@ function attenuate(){
       brightness = sphereMaterials[key].color.getHSL()["l"];
       if (brightness > 0.12) {
         sphereMaterials[key].color.offsetHSL(0, 0, attenuation_rate);
-      }
-      if (key in lineMaterials){
-        for(var j=0; j<lineMaterials[name].length; j++){
-          lineMaterials[name][j].color.offsetHSL(0, 0, attenuation_rate);
+        if (key in lineMaterials){
+          for(var j=0; j<lineMaterials[name].length; j++){
+            lineMaterials[name][j].color.offsetHSL(0, 0, attenuation_rate);
+          }
         }
       }
       if (brightness <= 0.12){

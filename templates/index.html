@@ -149,9 +149,14 @@ function init() {
   var ambient = new THREE.AmbientLight(0xffffff);
   scene.add(ambient);
 
+  var axis = new THREE.AxisHelper(1000);   
+  //sceneに追加
+  scene.add(axis);
+
   group = new THREE.Group();
-  group.position.x = -7661/scale;
-  group.position.y = -4194/scale;
+  group.rotation.z = Math.PI;
+  group.position.x = 7661/scale;
+  group.position.y = 4194/scale;
   group.position.z = -6957/scale;
 
   scene.add( group );

@@ -28,8 +28,12 @@
   background-color: rgba(100, 50, 50, 0.8);
   color: rgba(200, 200, 200, 0.8);
 }
-#deldetailbutton{
+#switchdetailbutton{
   background-color: rgba(50, 50, 100, 0.8);
+  color: rgba(200, 200, 200, 0.8);
+}
+#deletedetailbutton{
+  background-color: rgba(30, 30, 30, 0.8);
   color: rgba(200, 200, 200, 0.8);
 }
 #detailBox{
@@ -40,11 +44,7 @@
   right: 10px;
   border: None;
   background-color: rgba(100, 100, 100, 0.5);
-  font-size: 20px;
   color: rgba(30, 30, 30, 0.5);
-}
-.list-group{
-  margin-top: 25px;
 }
 .list-group-item{
   background-color: rgba(50, 50, 50, 0.8);
@@ -67,7 +67,7 @@
       <button class="btn" id="restorebutton" name="button" value="click" onClick="restore();return false;">
   	<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
       </button>
-      <button class="btn" id="deldetailbutton" name="button" value="click" onClick="switchDetail();return false;">
+      <button class="btn" id="switchdetailbutton" name="button" value="click" onClick="switchDetail();return false;">
 	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>
       </button>
     </form>
@@ -338,12 +338,9 @@ $("#detailBox").hover(
 );
 
 function addDetail(name, fullname, region){
-  var ul_element = document.createElement("li");
-  ul_element.classList.add("list-group-item");
-  ul_element.classList.add("result");
-  ul_element.innerHTML = name + " : " + fullname + " (" + region + ")";
-  var parent_object = document.getElementById("detail-list");
-  parent_object.appendChild(ul_element);
+  if (!(($("[name=" + name +"]").length))){
+    $("#detail-list").after("<li class='list-group-item result' name='" + name + "'><span style='font-size: 30px;'>"  + name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><button class='btn' name=" + name + " id='deletedetailbutton' value='click' onClick='deleteDetail(this.name);return false;'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button><br>&nbsp;&nbsp;&nbsp;" + fullname + " (" + region + ")</li>");
+  }
 }
 
 function hideDetail(){
@@ -365,11 +362,14 @@ function switchDetail(){
   }
 }
 
-function clearDetail(){
-  //detailBox = document.getElementById("detailBox");
-  //while (detailBox.firstChild) {
-  //  detailBox.removeChild(detailBox.firstChild);
-  //}
+function deleteDetail(name){
+  //delete button and detail
+  for (var i=0; i<2; i++){
+    $("[name=" + name + "]").remove();
+  }
+  if (!($(".result").length)){
+    hideDetail();
+  }
 }
 
 function restore(){
@@ -391,9 +391,8 @@ function search(form){
   var query = form.query.value;
   if (query != ""){
     restore();
-    clearDetail();
     for (var key in sphereMaterials){
-      if (key.indexOf(query) != 0){
+      if (key.indexOf(query) != 0){ //not start by query
         sphereMaterials[key].opacity = 0.25;
         sphereMaterials[key].transparent = true;
         textMeshes[key].material.opacity = 0.0;

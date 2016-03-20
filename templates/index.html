@@ -35,6 +35,7 @@
 #deletedetailbutton{
   background-color: rgba(30, 30, 30, 0.8);
   color: rgba(200, 200, 200, 0.8);
+  float: right;
 }
 #detailBox{
   width: 350px;
@@ -339,7 +340,7 @@ $("#detailBox").hover(
 
 function addDetail(name, fullname, region){
   if (!(($("[name=" + name +"]").length))){
-    $("#detail-list").after("<li class='list-group-item result' name='" + name + "'><span style='font-size: 30px;'>"  + name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><button class='btn' name=" + name + " id='deletedetailbutton' value='click' onClick='deleteDetail(this.name);return false;'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button><br>&nbsp;&nbsp;&nbsp;" + fullname + " (" + region + ")</li>");
+    $("#detail-list").after("<li class='list-group-item result' name='" + name + "'><span style='font-size: 30px;'>"  + name + "</span><button class='btn' name=" + name + " id='deletedetailbutton' value='click' onClick='deleteDetail(this.name);return false;'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button><br>&nbsp;&nbsp;&nbsp;" + fullname + "<br>&nbsp;&nbsp;&nbsp;" + region + "</li>");
   }
 }
 

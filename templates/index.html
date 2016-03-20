@@ -427,7 +427,7 @@ function search(form){
 
 //--------------- ATTENUATION ---------------
 function attenuate(){
-  attenuation_rate = -0.1;
+  attenuation_rate = -0.06;
   for (var key in brightness_count){
     if (brightness_count[key] != 0){
       brightness = sphereMaterials[key].color.getHSL()["l"];

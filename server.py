@@ -2,7 +2,6 @@ import sqlite3
 from flask import Flask, render_template, g, request
 from flask.ext.socketio import SocketIO, send, emit
 import math
-import argparse
 import random
 import threading
 
@@ -12,7 +11,6 @@ app.config['SECRET_KEY'] = 'mouse-brain-visualization'
 socketio = SocketIO(app)
 
 DATABASE = 'db/cells.db'
-abortrate = 0
 
 original_request_permission = {}
 request_permission = {}
@@ -75,7 +73,7 @@ def index():
 
 @app.route('/api', methods=['GET', 'POST'])
 def api():
-    if request.method == 'POST' and random.randint(0, 100) > abortrate:
+    if request.method == 'POST':
         data =  request.json
         data_name = []
         for d in data["cells"]:
@@ -92,11 +90,6 @@ def api():
 
 # Main process
 if __name__ == '__main__':
-    # Setup abortrate
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--abortrate', dest='abortrate', default=0, type=int)
-    abortrate = parser.parse_args().abortrate
-    
     # Permission
     reset_permission()
 

@@ -57,17 +57,3 @@ Then, run the test code to fire cells.
 ```
 $ python post_test.py
 ```
-
-##Runtime Options
-
-###Rate of aborting requests
-
-Too many requests cause a severe delay.
-
-You can change the rate by setting '--abortrate' option.
-
-By default, XX is 0.
-
-```
-$ python server.py --abortrate XX
-```

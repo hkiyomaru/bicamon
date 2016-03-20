@@ -45,7 +45,7 @@ def query_db(query, args=(), one=False):
 def reset_permission():
     global request_permission
     request_permission = dict(original_request_permission)
-    t = threading.Timer(0.5, reset_permission)
+    t = threading.Timer(1.0, reset_permission)
     t.start()
 
 # Routing Functions

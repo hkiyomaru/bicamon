@@ -236,7 +236,7 @@ function createElements() {
     //text material
     material = new THREE.MeshBasicMaterial({color: 0xcccccc});
     //sphere material
-    smaterial = new THREE.MeshLambertMaterial({ color: colorList["{{ value['region'] }}"]() });
+    smaterial = new THREE.MeshBasicMaterial({ color: colorList["{{ value['region'] }}"]() });
 
     //sphere geometry
     radius = (Math.sqrt("{{ value['voxel'] }}" / Math.PI)) * 2.3;
@@ -367,6 +367,15 @@ function deleteDetail(name){
   //delete button and detail
   for (var i=0; i<2; i++){
     $("[name=" + name + "]").remove();
+  }
+  sphereMaterials[name].opacity = 0.25;
+  sphereMaterials[name].transparent = true;
+  textMeshes[name].material.opacity = 0.0;
+  textMeshes[name].material.transparent = true;
+  if (name in lineMaterials){
+    for(var i=0; i<lineMaterials[name].length; i++){
+      lineMaterials[name][i].visible = false;
+    }
   }
   if (!($(".result").length)){
     hideDetail();

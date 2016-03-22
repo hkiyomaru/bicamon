@@ -1,6 +1,10 @@
-#WebGL Visualization of Mouse Brain
+#Zennoh Viewer
 
 ![screenshot](https://raw.github.com/wiki/kiyomaro927/MouseBrainVisualizationOnWeb/images/screen_shot.png)
+
+##What is Zennoh Viewer
+
+Zennoh Viewer provides a visually understanding of the whole brain architecture(WBA).
 
 ##Instruction
 

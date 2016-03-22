@@ -9,4 +9,6 @@ cur.execute("""create table cells (id integer PRIMARY KEY AUTOINCREMENT,name var
 
 cur.execute("""create table links (id integer PRIMARY KEY AUTOINCREMENT,root varchar(10),dest varchar(10),weight float);""")
 
+cur.execute("""create table contra_links (id integer PRIMARY KEY AUTOINCREMENT,root varchar(10),dest varchar(10),weight float);""")
+
 conn.close()

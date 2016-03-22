@@ -6,7 +6,7 @@ conn = sqlite3.connect('../cells.db')
 
 c = conn.cursor()
 
-sql = u"select * from cells"
+sql = u"select * from contra_links"
 
 c.execute(sql)
 

@@ -135,6 +135,10 @@ colorList["Thalamus"] = function(){
   return 0x1E1E1E;
 };
 
+var x_offset = 7661;
+var y_offset = 4194;
+var z_offset = 5407;
+
 THREE.Cache.enabled = true;
 var container, controls, color;
 var camera, cameraTarget, scene, renderer;
@@ -142,8 +146,10 @@ var group, textMesh, textGeo, material;
 var scale = 2.5;
 
 var sphereMaterials = {};
+
 var lineMaterials = {};
 var textMeshes = {};
+var contra_textMeshes = {};
 var brightness_count = {};
 var details = {};
 var firstLetter = true;
@@ -183,9 +189,6 @@ function init() {
 
   // RENDERING TARGET
   group = new THREE.Group();
-  group.position.x = 7661/scale;
-  group.position.y = 4194/scale;
-  group.position.z = 6957/scale;
   scene.add( group );
 
   loadWorld();
@@ -261,24 +264,41 @@ function createElements() {
     var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
     sphereMesh = new THREE.Mesh( sphereGeo, smaterial );
-    sphereMesh.position.x = -({{ value['x'] }}/scale);
-    sphereMesh.position.y = hover - ({{ value['y'] }}/scale);
-    sphereMesh.position.z = 0 - ({{ value['z'] }}/scale);
+    sphereMesh.position.x = (x_offset - {{ value['x'] }})/scale;
+    sphereMesh.position.y = hover + (y_offset - {{ value['y'] }})/scale;
+    sphereMesh.position.z = 0 + (z_offset - {{ value['z'] }})/scale;
+
+    contra_sphereMesh = new THREE.Mesh( sphereGeo, smaterial );
+    contra_sphereMesh.position.x = (x_offset - {{ value['x'] }})/scale;
+    contra_sphereMesh.position.y = hover + (y_offset - {{ value['y'] }})/scale;
+    contra_sphereMesh.position.z = -(0 + (z_offset - {{ value['z'] }})/scale);  
 
     textMesh = new THREE.Mesh( textGeo, material );
 
-    textMesh.position.x = centerOffset - radius/2 - ({{ value['x'] }}/scale);
-    textMesh.position.y = hover + radius - ({{ value['y'] }}/scale);
-    textMesh.position.z = 0 - ({{ value['z'] }}/scale);
+    textMesh.position.x = centerOffset - radius/2 + (x_offset - {{ value['x'] }})/scale;
+    textMesh.position.y = hover + radius + (y_offset - {{ value['y'] }})/scale;
+    textMesh.position.z = 0 + (z_offset - {{ value['z'] }})/scale;
 
     textMesh.rotation.x = 0;
     textMesh.rotation.y = Math.PI * 2;
 
+    contra_textMesh = new THREE.Mesh( textGeo, material );
+
+    contra_textMesh.position.x = centerOffset - radius/2 + (x_offset - {{ value['x'] }})/scale;
+    contra_textMesh.position.y = hover + radius + (y_offset - {{ value['y'] }})/scale;
+    contra_textMesh.position.z = -(0 + (z_offset - {{ value['z'] }})/scale);
+
+    contra_textMesh.rotation.x = 0;
+    contra_textMesh.rotation.y = Math.PI * 2;
+
     sphereMaterials["{{ key }}"] = smaterial;
     textMeshes["{{ key }}"] = textMesh;
+    contra_textMeshes["{{ key }}"] = contra_textMesh;
 
     group.add( sphereMesh );
+    group.add( contra_sphereMesh );
     group.add( textMesh );
+    group.add( contra_textMesh );
 
   {% endfor %}
 
@@ -287,12 +307,16 @@ function createElements() {
     lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
 
     //line geometry
-    lineGeo = new THREE.Geometry();
-    
-    lineGeo.vertices.push(new THREE.Vector3(-{{ cells[link["root"]]["x"] }}/scale - (scale * 3), -{{ cells[link["root"]]["y"] }}/scale, -{{ cells[link["root"]]["z"] }}/scale ));
-    lineGeo.vertices.push(new THREE.Vector3(-{{ cells[link["dest"]]["x"] }}/scale - (scale * 3), -{{ cells[link["dest"]]["y"] }}/scale, -{{ cells[link["dest"]]["z"] }}/scale ));
+    lineGeo = new THREE.Geometry();   
+    lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["root"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["root"]]["y"] }})/scale, (z_offset - {{ cells[link["root"]]["z"] }})/scale ));
+    lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["dest"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["dest"]]["y"] }})/scale, (z_offset - {{ cells[link["dest"]]["z"] }})/scale ));
+
+    contra_lineGeo = new THREE.Geometry();   
+    contra_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["root"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["root"]]["y"] }})/scale, -(z_offset - {{ cells[link["root"]]["z"] }})/scale ));
+    contra_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["dest"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["dest"]]["y"] }})/scale, -(z_offset - {{ cells[link["dest"]]["z"] }})/scale ));
 
     line = new THREE.Line(lineGeo, lmaterial);
+    contra_line = new THREE.Line(contra_lineGeo, lmaterial);
 
     if (!("{{ link['root'] }}" in lineMaterials)){
       lineMaterials["{{ link['root'] }}"] = [];
@@ -301,6 +325,34 @@ function createElements() {
     lineMaterials["{{ link['root'] }}"].push(lmaterial);
     
     group.add( line );
+    group.add( contra_line );
+
+  {% endfor %}
+
+  {% for link in c_links %}
+    //line material
+    lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
+
+    //line geometry
+    lineGeo = new THREE.Geometry();
+    lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["root"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["root"]]["y"] }})/scale, (z_offset - {{ cells[link["root"]]["z"] }})/scale ));
+    lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["dest"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["dest"]]["y"] }})/scale, -(z_offset - {{ cells[link["dest"]]["z"] }})/scale ));
+
+    contra_lineGeo = new THREE.Geometry();   
+    contra_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["root"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["root"]]["y"] }})/scale, -(z_offset - {{ cells[link["root"]]["z"] }})/scale ));
+    contra_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["dest"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["dest"]]["y"] }})/scale, (z_offset - {{ cells[link["dest"]]["z"] }})/scale ));
+
+    line = new THREE.Line(lineGeo, lmaterial);
+    contra_line = new THREE.Line(contra_lineGeo, lmaterial);
+
+    if (!("{{ link['root'] }}" in lineMaterials)){
+      lineMaterials["{{ link['root'] }}"] = [];
+    }
+
+    lineMaterials["{{ link['root'] }}"].push(lmaterial);
+    
+    group.add( line );
+    group.add( contra_line );
 
   {% endfor %}
 }
@@ -314,6 +366,9 @@ function animate() {
 function render() {
   for (var key in textMeshes){
     textMeshes[key].rotation.setFromRotationMatrix( camera.matrix );
+  }
+  for (var key in contra_textMeshes){
+    contra_textMeshes[key].rotation.setFromRotationMatrix( camera.matrix );
   }
   renderer.clear();
   renderer.render( scene, camera );

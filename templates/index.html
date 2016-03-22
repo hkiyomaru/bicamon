@@ -149,6 +149,7 @@ var sphereMaterials = {};
 
 var lineMaterials = {};
 var textMeshes = {};
+var contra_textMeshes = {};
 var brightness_count = {};
 var details = {};
 var firstLetter = true;
@@ -285,12 +286,23 @@ function createElements() {
     textMesh.rotation.x = 0;
     textMesh.rotation.y = Math.PI * 2;
 
+    contra_textMesh = new THREE.Mesh( textGeo, material );
+
+    contra_textMesh.position.x = centerOffset - radius/2 + (x_offset - {{ value['x'] }})/scale;
+    contra_textMesh.position.y = hover + radius + (y_offset - {{ value['y'] }})/scale;
+    contra_textMesh.position.z = -(0 + (z_offset - {{ value['z'] }})/scale);
+
+    contra_textMesh.rotation.x = 0;
+    contra_textMesh.rotation.y = Math.PI * 2;
+
     sphereMaterials["{{ key }}"] = smaterial;
     textMeshes["{{ key }}"] = textMesh;
+    contra_textMeshes["{{ key }}"] = contra_textMesh;
 
     group.add( sphereMesh );
     group.add( contra_sphereMesh );
     group.add( textMesh );
+    group.add( contra_textMesh );
 
   {% endfor %}
 
@@ -358,6 +370,9 @@ function animate() {
 function render() {
   for (var key in textMeshes){
     textMeshes[key].rotation.setFromRotationMatrix( camera.matrix );
+  }
+  for (var key in contra_textMeshes){
+    contra_textMeshes[key].rotation.setFromRotationMatrix( camera.matrix );
   }
   renderer.clear();
   renderer.render( scene, camera );

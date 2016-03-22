@@ -52,10 +52,12 @@ def index():
     # Get data from database
     cellnames = query_db('select name from cells')
     links = query_db('select * from links')
+    contra_links = query_db('select * from contra_links')
     
     # Data to send to view
     send_cells = {}
     send_links = []
+    send_c_links = []
     global original_request_permission
     
     # Set data
@@ -69,7 +71,14 @@ def index():
         dest_coordinate = query_db('select * from cells where name="%s"' % link["dest"])
         if len(root_coordinate) != 0 and len(dest_coordinate) != 0:
             send_links.append(link)
-    return render_template('index.html', cells=send_cells, links=send_links)
+
+    for link in contra_links:
+        root_coordinate = query_db('select * from cells where name="%s"' % link["root"])
+        dest_coordinate = query_db('select * from cells where name="%s"' % link["dest"])
+        if len(root_coordinate) != 0 and len(dest_coordinate) != 0:
+            send_c_links.append(link)
+
+    return render_template('index.html', cells=send_cells, links=send_links, c_links=send_c_links)
 
 @app.route('/api', methods=['GET', 'POST'])
 def api():

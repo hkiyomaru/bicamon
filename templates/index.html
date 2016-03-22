@@ -137,7 +137,7 @@ colorList["Thalamus"] = function(){
 
 var x_offset = 7661;
 var y_offset = 4194;
-var z_offset = 5357;
+var z_offset = 5407;
 
 THREE.Cache.enabled = true;
 var container, controls, color;
@@ -299,12 +299,16 @@ function createElements() {
     lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
 
     //line geometry
-    lineGeo = new THREE.Geometry();
-    
+    lineGeo = new THREE.Geometry();   
     lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["root"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["root"]]["y"] }})/scale, (z_offset - {{ cells[link["root"]]["z"] }})/scale ));
     lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["dest"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["dest"]]["y"] }})/scale, (z_offset - {{ cells[link["dest"]]["z"] }})/scale ));
 
+    contra_lineGeo = new THREE.Geometry();   
+    contra_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["root"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["root"]]["y"] }})/scale, -(z_offset - {{ cells[link["root"]]["z"] }})/scale ));
+    contra_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["dest"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["dest"]]["y"] }})/scale, -(z_offset - {{ cells[link["dest"]]["z"] }})/scale ));
+
     line = new THREE.Line(lineGeo, lmaterial);
+    contra_line = new THREE.Line(contra_lineGeo, lmaterial);
 
     if (!("{{ link['root'] }}" in lineMaterials)){
       lineMaterials["{{ link['root'] }}"] = [];
@@ -313,6 +317,7 @@ function createElements() {
     lineMaterials["{{ link['root'] }}"].push(lmaterial);
     
     group.add( line );
+    group.add( contra_line );
 
   {% endfor %}
 }

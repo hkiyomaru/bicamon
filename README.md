@@ -48,7 +48,7 @@ For more information, please access [this page](http://caniuse.com/#search=webgl
 
 ##Test
 
-I think the cells you're watching are not firing.
+I know the cells you're watching are not firing.
 
 I prepared some test programs in the test directory.
 
@@ -57,3 +57,17 @@ Then, run the test code to fire cells.
 ```
 $ python post_test.py
 ```
+
+##Combine
+
+Let's combine your brain model.
+
+The program to call API is in the test direcory.
+
+Then, open _api.py_.
+
+The function named 'send_to_viewer' can send POST request to the viewer.
+
+Please put this function in the directory in the path.
+
+And, insert the function call in your program.

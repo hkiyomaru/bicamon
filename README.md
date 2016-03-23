@@ -4,7 +4,7 @@
 
 ##What is Zennoh Viewer
 
-Zennoh Viewer provides visually understanding of the whole brain architecture(WBA).
+Zennoh Viewer provides visually understanding of a brain type cognitive architecture.
 
 ##Instruction
 

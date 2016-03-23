@@ -340,7 +340,7 @@ function render() {
 }
 
 
-//--------------- ADDITIONAL LINE ---------------
+//--------------- SWITCH HALF ---------------
 function switchHalf(){
   if (halfVisible){
     hideHalf();
@@ -360,17 +360,11 @@ function hideHalf(){
   for (var key in contra_lineMaterials){
     for (var i=0; i<c_contra_lineMaterials[key].length; i++){
       contra_lineMaterials[key][i].visible = false;
-    }
-  }
-  for (var key in c_contra_lineMaterials){
-    for (var i=0; i<c_contra_lineMaterials[key].length; i++){
       c_contra_lineMaterials[key][i].visible = false;
     }
   }
   for (var key in c_sphereMaterials){
     c_sphereMaterials[key].visible = false;
-  }
-  for (var key in c_textMeshes){
     c_textMeshes[key].material.visible = false;
   }
 }
@@ -387,12 +381,6 @@ function showHalf(){
     if ((resultNodes.length == 0) || (resultNodes.indexOf(key) >= 0)){
       for (var i=0; i<c_contra_lineMaterials[key].length; i++){
         contra_lineMaterials[key][i].visible = true;
-      }
-    }
-  }
-  for (var key in c_contra_lineMaterials){
-    if ((resultNodes.length == 0) || (resultNodes.indexOf(key) >= 0)){
-      for (var i=0; i<c_contra_lineMaterials[key].length; i++){
         c_contra_lineMaterials[key][i].visible = true;
       }
     }
@@ -495,20 +483,12 @@ function deleteDetail(name){
   if (name in lineMaterials){
     for(var i=0; i<lineMaterials[name].length; i++){
       lineMaterials[name][i].visible = false;
-    }
-  }
-  if (name in c_lineMaterials){
-    for(var i=0; i<c_lineMaterials[name].length; i++){
       c_lineMaterials[name][i].visible = false;
     }
   }
   if (name in contra_lineMaterials){
     for(var i=0; i<contra_lineMaterials[name].length; i++){
       contra_lineMaterials[name][i].visible = false;
-    }
-  }
-  if (name in c_contra_lineMaterials){
-    for(var i=0; i<c_contra_lineMaterials[name].length; i++){
       c_contra_lineMaterials[name][i].visible = false;
     }
   }
@@ -531,45 +511,41 @@ function clearDetail(){
 
 //Restore world to default
 function restore(){
-  halfVisible = true;
+  //halfVisible = true;
   for (var key in sphereMaterials){
     sphereMaterials[key].opacity = 1.0;
     sphereMaterials[key].transparent = false;
     sphereMaterials[key].visible = true;
-  }
-  for (var key in c_sphereMaterials){
     c_sphereMaterials[key].opacity = 1.0;
     c_sphereMaterials[key].transparent = false;
-    c_sphereMaterials[key].visible = true;
+    if (halfVisible){
+      c_sphereMaterials[key].visible = true;
+    }
   }
   for (var key in textMeshes){
     textMeshes[key].material.visible = true;
-  }
-  for (var key in c_textMeshes){
-    c_textMeshes[key].material.visible = true;
+    if (halfVisible){
+      c_textMeshes[key].material.visible = true;
+    }
   }
   for (var key in lineMaterials){
     for (var i=0; i<lineMaterials[key].length; i++){
       lineMaterials[key][i].opacity = 0.15;
       lineMaterials[key][i].visible = true;
-    }
-  }
-  for (var key in c_lineMaterials){
-    for (var i=0; i<c_lineMaterials[key].length; i++){
       c_lineMaterials[key][i].opacity = 0.15;
-      c_lineMaterials[key][i].visible = true;
+      if (halfVisible){
+        c_lineMaterials[key][i].visible = true;
+      }
     }
   }
   for (var key in contra_lineMaterials){
     for (var i=0; i<contra_lineMaterials[key].length; i++){
       contra_lineMaterials[key][i].opacity = 0.15;
-      contra_lineMaterials[key][i].visible = true;
-    }
-  }
-  for (var key in c_contra_lineMaterials){
-    for (var i=0; i<c_contra_lineMaterials[key].length; i++){
       c_contra_lineMaterials[key][i].opacity = 0.15;
-      c_contra_lineMaterials[key][i].visible = true;
+      if (halfVisible){
+        contra_lineMaterials[key][i].visible = true;
+        c_contra_lineMaterials[key][i].visible = true;
+      }
     }
   }
 }
@@ -589,28 +565,21 @@ function search(form){
       if (key.indexOf(query) != 0){ //not start by query
         if (resultNodes.indexOf(key) < 0){
           sphereMaterials[key].opacity = 0.25;
-          c_sphereMaterials[key].opacity = 0.25;
           sphereMaterials[key].transparent = true;
+          c_sphereMaterials[key].opacity = 0.25;
           c_sphereMaterials[key].transparent = true;
           textMeshes[key].material.visible = false;
           c_textMeshes[key].material.visible = false;
           if (key in lineMaterials){
             for(var i=0; i<lineMaterials[key].length; i++){
               lineMaterials[key][i].visible = false;
-            }
-          }
-          if (key in c_lineMaterials){
-            for(var i=0; i<c_lineMaterials[key].length; i++){
               c_lineMaterials[key][i].visible = false;
+
             }
           }
           if (key in contra_lineMaterials){
             for(var i=0; i<contra_lineMaterials[key].length; i++){
               contra_lineMaterials[key][i].visible = false;
-            }
-          }
-          if (key in c_contra_lineMaterials){
-            for(var i=0; i<c_contra_lineMaterials[key].length; i++){
               c_contra_lineMaterials[key][i].visible = false;
             }
           }
@@ -621,20 +590,12 @@ function search(form){
         if (key in lineMaterials){
           for(var i=0; i<lineMaterials[key].length; i++){
             lineMaterials[key][i].opacity = 1.0;
-          }
-        }
-        if (key in c_lineMaterials){
-          for(var i=0; i<c_lineMaterials[key].length; i++){
             c_lineMaterials[key][i].opacity = 1.0;
           }
         }
         if (key in contra_lineMaterials){
           for(var i=0; i<contra_lineMaterials[key].length; i++){
             contra_lineMaterials[key][i].opacity = 1.0;
-          }
-        }
-        if (key in c_contra_lineMaterials){
-          for(var i=0; i<c_contra_lineMaterials[key].length; i++){
             c_contra_lineMaterials[key][i].opacity = 1.0;
           }
         }
@@ -655,20 +616,12 @@ function attenuate(){
         if (key in lineMaterials){
           for(var i=0; i<lineMaterials[key].length; i++){
             lineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
-          }
-        }
-        if (key in c_lineMaterials){
-          for(var i=0; i<c_lineMaterials[key].length; i++){
             c_lineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
           }
         }
         if (key in contra_lineMaterials){
           for(var i=0; i<contra_lineMaterials[key].length; i++){
             contra_lineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
-          }
-        }
-        if (key in c_contra_lineMaterials){
-          for(var i=0; i<c_contra_lineMaterials[key].length; i++){
             c_contra_lineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
           }
         }
@@ -702,20 +655,12 @@ socket.on('activation', function(data){
       if (name in lineMaterials){
         for(var j=0; j<lineMaterials[name].length; j++){
 	  lineMaterials[name][j].color.offsetHSL(0, 0, 0.3);
-        }
-      }
-      if (name in c_lineMaterials){
-        for(var j=0; j<c_lineMaterials[name].length; j++){
 	  c_lineMaterials[name][j].color.offsetHSL(0, 0, 0.3);
         }
       }
       if (name in contra_lineMaterials){
         for(var j=0; j<contra_lineMaterials[name].length; j++){
 	  contra_lineMaterials[name][j].color.offsetHSL(0, 0, 0.3);
-        }
-      }
-      if (name in c_contra_lineMaterials){
-        for(var j=0; j<c_contra_lineMaterials[name].length; j++){
 	  c_contra_lineMaterials[name][j].color.offsetHSL(0, 0, 0.3);
         }
       }

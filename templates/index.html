@@ -86,6 +86,9 @@ font = undefined;
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
+//variables about search
+var resultNodes = []
+
 //main function call
 init();
 animate();
@@ -332,6 +335,7 @@ $("#detailBox").hover(
 //Add detail information to detailbox
 function addDetail(name, fullname, region){
   if (!(($("[name=" + name +"]").length))){
+    resultNodes.push(name);
     $("#detail-list").after("<li class='list-group-item result' name='" + name + "'><span style='font-size: 30px;'>"  + name + "</span><button class='btn' name=" + name + " id='deletedetailbutton' value='click' onClick='deleteDetail(this.name);return false;'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button><br>&nbsp;&nbsp;&nbsp;" + fullname + "<br>&nbsp;&nbsp;&nbsp;" + region + "</li>");
   }
 }
@@ -372,9 +376,21 @@ function deleteDetail(name){
       lineMaterials[name][i].visible = false;
     }
   }
+  resultNodes.some(function(v, i){
+    if (v==name) resultNodes.splice(i, 1);
+  });
   if (!($(".result").length)){
     hideDetail();
   }
+}
+
+//Clear detail
+function clearDetail(){
+  resultNodes = [];
+  $(".result").each(function(){
+    $(this).remove();
+  });
+  hideDetail();
 }
 
 //Restore world to default
@@ -392,6 +408,12 @@ function restore(){
   }
 }
 
+//Initialize world
+function initializeWorld(){
+  clearDetail();
+  restore();
+}
+
 //Search node
 function search(form){
   var query = form.query.value;
@@ -399,12 +421,14 @@ function search(form){
     restore();
     for (var key in sphereMaterials){
       if (key.indexOf(query) != 0){ //not start by query
-        sphereMaterials[key].opacity = 0.25;
-        sphereMaterials[key].transparent = true;
-        textMeshes[key].material.visible = false;
-        if (key in lineMaterials){
-          for(var i=0; i<lineMaterials[key].length; i++){
-            lineMaterials[key][i].visible = false;
+        if (resultNodes.indexOf(key) < 0){
+          sphereMaterials[key].opacity = 0.25;
+          sphereMaterials[key].transparent = true;
+          textMeshes[key].material.visible = false;
+          if (key in lineMaterials){
+            for(var i=0; i<lineMaterials[key].length; i++){
+              lineMaterials[key][i].visible = false;
+            }
           }
         }
       }else{

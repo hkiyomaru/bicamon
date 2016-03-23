@@ -329,26 +329,26 @@ $("#detailBox").hover(
   }
 );
 
-// add detail information to detailbox
+//Add detail information to detailbox
 function addDetail(name, fullname, region){
   if (!(($("[name=" + name +"]").length))){
     $("#detail-list").after("<li class='list-group-item result' name='" + name + "'><span style='font-size: 30px;'>"  + name + "</span><button class='btn' name=" + name + " id='deletedetailbutton' value='click' onClick='deleteDetail(this.name);return false;'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button><br>&nbsp;&nbsp;&nbsp;" + fullname + "<br>&nbsp;&nbsp;&nbsp;" + region + "</li>");
   }
 }
 
-// hide detailbox
+//Hide detailbox
 function hideDetail(){
   detailBox = document.getElementById("detailBox");
   detailBox.style.visibility = "hidden";
 }
 
-// show detailbox
+//Show detailbox
 function showDetail(){
   detailBox = document.getElementById("detailBox");
   detailBox.style.visibility = "visible";
 }
 
-// switch showing and hiding
+//Switch showing and hiding
 function switchDetail(){
   detailBox = document.getElementById("detailBox");
   if (detailBox.style.visibility == "visible"){
@@ -358,16 +358,15 @@ function switchDetail(){
   }
 }
 
-// delete detail information
+//Delete detail information
 function deleteDetail(name){
-  //delete button and detail
+  // delete button and detail
   for (var i=0; i<2; i++){
     $("[name=" + name + "]").remove();
   }
   sphereMaterials[name].opacity = 0.25;
   sphereMaterials[name].transparent = true;
-  textMeshes[name].material.opacity = 0.0;
-  textMeshes[name].material.transparent = true;
+  textMeshes[name].material.visible = false;
   if (name in lineMaterials){
     for(var i=0; i<lineMaterials[name].length; i++){
       lineMaterials[name][i].visible = false;
@@ -378,22 +377,22 @@ function deleteDetail(name){
   }
 }
 
-// restore world to default
+//Restore world to default
 function restore(){
   for (var key in sphereMaterials){
     sphereMaterials[key].opacity = 1.0;
     sphereMaterials[key].transparent = false;
-    textMeshes[key].material.opacity = 1.0;
-    textMeshes[key].material.transparent = false;
+    textMeshes[key].material.visible = true;
   }
-  {% for link in links %}
-    for (var i=0; i<lineMaterials["{{ link['root'] }}"].length; i++){
-      lineMaterials["{{ link['root'] }}"][i].opacity = 0.15;
-      lineMaterials["{{ link['root'] }}"][i].visible = true;
+  for (var key in lineMaterials){
+    for (var i=0; i<lineMaterials[key].length; i++){
+      lineMaterials[key][i].opacity = 0.15;
+      lineMaterials[key][i].visible = true;
     }
-  {% endfor %}
+  }
 }
 
+//Search node
 function search(form){
   var query = form.query.value;
   if (query != ""){
@@ -402,8 +401,7 @@ function search(form){
       if (key.indexOf(query) != 0){ //not start by query
         sphereMaterials[key].opacity = 0.25;
         sphereMaterials[key].transparent = true;
-        textMeshes[key].material.opacity = 0.0;
-        textMeshes[key].material.transparent = true;
+        textMeshes[key].material.visible = false;
         if (key in lineMaterials){
           for(var i=0; i<lineMaterials[key].length; i++){
             lineMaterials[key][i].visible = false;
@@ -447,6 +445,7 @@ function attenuate(){
   }
 }
 
+//Call attenuate function at a certain interval
 function startAttenuation(){
   interval = 50;
   setInterval("attenuate()", interval);

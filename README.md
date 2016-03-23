@@ -28,7 +28,7 @@ You don't have the necessary database file yet.
 
 However, you have the seed to build it.
 
-```cd database```, and run this.
+```cd db```, and run this command.
 
 ```
 $ ./makedb.sh

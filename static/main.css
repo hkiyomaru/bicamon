@@ -4,7 +4,7 @@
 #viewArea{
 }
 .toolBox{
-  width: 350px;
+  width: 400px;
   height: 100px;
   position: absolute;
   top: 10px;
@@ -27,6 +27,10 @@
   background-color: rgba(50, 50, 100, 0.8);
   color: rgba(200, 200, 200, 0.8);
 }
+#addlinedetailbutton{
+  background-color: rgba(50, 100, 50, 0.8);
+  color: rgba(200, 200, 200, 0.8);
+}
 #deletedetailbutton{
   background-color: rgba(30, 30, 30, 0.8);
   color: rgba(200, 200, 200, 0.8);
@@ -37,7 +41,7 @@
   height: auto;
   position: absolute;
   bottom: 10px;
-  right: 10px;
+  left: 10px;
   border: None;
   background-color: rgba(100, 100, 100, 0.5);
   color: rgba(30, 30, 30, 0.5);

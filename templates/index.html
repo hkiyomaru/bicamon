@@ -63,9 +63,13 @@ var group;
 //scale config
 var scale = 2.5;
 
+//additional line switch
+var lineVisible = false;
+
 //element lists
 var sphereMaterials = {};
 var lineMaterials = {};
+var additionalLineMaterials = {};
 var textMeshes = {};
 var contra_textMeshes = {};
 var brightness_count = {};
@@ -226,15 +230,17 @@ function createElements() {
     contra_textMeshes["{{ key }}"] = contra_textMesh;
 
     // add to group
-    group.add( sphereMesh );
-    group.add( contra_sphereMesh );
-    group.add( textMesh );
-    group.add( contra_textMesh );
+    group.add(sphereMesh);
+    group.add(contra_sphereMesh);
+    group.add(textMesh);
+    group.add(contra_textMesh);
   {% endfor %}
 
   {% for link in links %}
     // set line material
     lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
+    additional_lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
+    additional_lmaterial.visible = false;
 
     // set line geometry
     lineGeo = new THREE.Geometry();   
@@ -248,7 +254,7 @@ function createElements() {
 
     // create line
     line = new THREE.Line(lineGeo, lmaterial);
-    contra_line = new THREE.Line(contra_lineGeo, lmaterial);
+    contra_line = new THREE.Line(contra_lineGeo, additional_lmaterial);
 
     // save link
     if (!("{{ link['root'] }}" in lineMaterials)){
@@ -256,9 +262,15 @@ function createElements() {
     }
     lineMaterials["{{ link['root'] }}"].push(lmaterial);
     
+    // save additional link
+    if (!("{{ link['root'] }}" in additionalLineMaterials)){
+      additionalLineMaterials["{{ link['root'] }}"] = [];
+    }
+    additionalLineMaterials["{{ link['root'] }}"].push(additional_lmaterial);
+
     // add to group
-    group.add( line );
-    group.add( contra_line );
+    group.add(line);
+    group.add(contra_line);
   {% endfor %}
 
   {% for link in c_links %}
@@ -286,8 +298,8 @@ function createElements() {
     lineMaterials["{{ link['root'] }}"].push(lmaterial);
     
     // add to group
-    group.add( line );
-    group.add( contra_line );
+    group.add(line);
+    group.add(contra_line);
   {% endfor %}
 }
 
@@ -311,6 +323,56 @@ function render() {
   //rendering
   renderer.clear();
   renderer.render(scene, camera);
+}
+
+
+//--------------- ADDITIONAL LINE ---------------
+function switchLine(){
+  if (lineVisible){
+    hideLine();
+    lineVisible = false;
+  }else{
+    showLine();
+    lineVisible = true;
+  }
+}
+
+function hideLine(){
+  for (var key in additionalLineMaterials){
+    for (var i=0; i<additionalLineMaterials[key].length; i++){
+      additionalLineMaterials[key][i].visible = false;
+    }
+  }
+}
+
+function showLine(){
+  for (var key in additionalLineMaterials){
+    for (var i=0; i<additionalLineMaterials[key].length; i++){
+      additionalLineMaterials[key][i].visible = true;
+    }
+  }
+}
+
+//Hide detailbox
+function hideDetail(){
+  detailBox = document.getElementById("detailBox");
+  detailBox.style.visibility = "hidden";
+}
+
+//Show detailbox
+function showDetail(){
+  detailBox = document.getElementById("detailBox");
+  detailBox.style.visibility = "visible";
+}
+
+//Switch showing and hiding
+function switchDetail(){
+  detailBox = document.getElementById("detailBox");
+  if (detailBox.style.visibility == "visible"){
+    hideDetail();
+  }else{
+    showDetail();
+  }
 }
 
 //--------------- SEARCH ---------------
@@ -406,6 +468,12 @@ function restore(){
       lineMaterials[key][i].visible = true;
     }
   }
+  for (var key in additionalLineMaterials){
+    for (var i=0; i<additionalLineMaterials[key].length; i++){
+      additionalLineMaterials[key][i].opacity = 0.15;
+      additionalLineMaterials[key][i].visible = lineVisible;
+    }
+  }
 }
 
 //Initialize world
@@ -430,6 +498,11 @@ function search(form){
               lineMaterials[key][i].visible = false;
             }
           }
+          if (key in additionalLineMaterials){
+            for(var i=0; i<additionalLineMaterials[key].length; i++){
+              additionalLineMaterials[key][i].visible = false;
+            }
+          }
         }
       }else{
         addDetail(key, details[key]["fullname"], details[key]["region"]);
@@ -437,6 +510,11 @@ function search(form){
         if (key in lineMaterials){
           for(var i=0; i<lineMaterials[key].length; i++){
             lineMaterials[key][i].opacity = 1.0;
+          }
+        }
+        if (key in additionalLineMaterials){
+          for(var i=0; i<additionalLineMaterials[key].length; i++){
+            additionalLineMaterials[key][i].opacity = 1.0;
           }
         }
       }
@@ -455,6 +533,11 @@ function attenuate(){
         if (key in lineMaterials){
           for(var i=0; i<lineMaterials[key].length; i++){
             lineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
+          }
+        }
+        if (key in additionalLineMaterials){
+          for(var i=0; i<additionalLineMaterials[key].length; i++){
+            additionalLineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
           }
         }
       }
@@ -486,6 +569,11 @@ socket.on('activation', function(data){
       if (name in lineMaterials){
         for(var j=0; j<lineMaterials[name].length; j++){
 	  lineMaterials[name][j].color.offsetHSL(0, 0, 0.3);
+        }
+      }
+      if (name in additionalLineMaterials){
+        for(var j=0; j<additionalLineMaterials[name].length; j++){
+	  additionalLineMaterials[name][j].color.offsetHSL(0, 0, 0.3);
         }
       }
     }

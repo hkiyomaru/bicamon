@@ -465,9 +465,9 @@ function switchDetail(){
 //Delete detail information
 function deleteDetail(name){
   // delete button and detail
-  for (var i=0; i<2; i++){
-    $("[name=" + name + "]").remove();
-  }
+  $("[name=" + name + "]").each(function(){
+    $(this).remove();
+  });
   sphereMaterials[name].opacity = 0.25;
   sphereMaterials[name].transparent = true;
   c_sphereMaterials[name].opacity = 0.25;
@@ -491,6 +491,7 @@ function deleteDetail(name){
   });
   if (!($(".result").length)){
     initializeWorld();
+    controls.enabled = true;
   }
 }
 
@@ -593,8 +594,8 @@ function search(form){
 }
 
 //--------------- ATTENUATION ---------------
+var attenuation_rate = -0.20;
 function attenuate(){
-  attenuation_rate = -0.20;
   for (var key in brighting_flags){
     if (brighting_flags[key]){
       brightness = sphereMaterials[key].color.getHSL()["l"];
@@ -627,24 +628,25 @@ function startAttenuation(){
 }
 
 //--------------- WEBSOCKET ---------------
+var brighting_point = 0.7;
 var socket = io.connect('http://' + document.domain + ':' + location.port)
 socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
     name = data[i];
     if (!brighting_flags[name]){
       brighting_flags[name] = true;
-      sphereMaterials[name].color.offsetHSL(0, 0, 0.7);
-      c_sphereMaterials[name].color.offsetHSL(0, 0, 0.7);
+      sphereMaterials[name].color.offsetHSL(0, 0, brighting_point);
+      c_sphereMaterials[name].color.offsetHSL(0, 0, brighting_point);
       if (name in lineMaterials){
         for(var j=0; j<lineMaterials[name].length; j++){
-	  lineMaterials[name][j].color.offsetHSL(0, 0, 0.7);
-	  c_lineMaterials[name][j].color.offsetHSL(0, 0, 0.7);
+	  lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
+	  c_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
         }
       }
       if (name in contra_lineMaterials){
         for(var j=0; j<contra_lineMaterials[name].length; j++){
-	  contra_lineMaterials[name][j].color.offsetHSL(0, 0, 0.7);
-	  c_contra_lineMaterials[name][j].color.offsetHSL(0, 0, 0.7);
+	  contra_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
+	  c_contra_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
         }
       }
     }

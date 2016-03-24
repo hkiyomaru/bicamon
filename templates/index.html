@@ -64,7 +64,7 @@ var group;
 var scale = 2.5;
 
 //additional line switch
-var halfVisible = true;
+var isWholeMode = true;
 
 //element lists
 var sphereMaterials = {};
@@ -213,7 +213,7 @@ function createElements() {
     c_sphereMesh = new THREE.Mesh(sphereGeo, c_smaterial);
     c_sphereMesh.position.x = (x_offset - {{ value['x'] }})/scale;
     c_sphereMesh.position.y = hover + (y_offset - {{ value['y'] }})/scale;
-    c_sphereMesh.position.z = -(0 + (z_offset - {{ value['z'] }})/scale);  
+    c_sphereMesh.position.z = -(0 + (z_offset - {{ value['z'] }})/scale); //inversed  
 
     // create text mesh
     textMesh = new THREE.Mesh( textGeo, tmaterial );
@@ -227,7 +227,7 @@ function createElements() {
     c_textMesh = new THREE.Mesh(textGeo, c_tmaterial);
     c_textMesh.position.x = centerOffset - radius/2 + (x_offset - {{ value['x'] }})/scale;
     c_textMesh.position.y = hover + radius + (y_offset - {{ value['y'] }})/scale;
-    c_textMesh.position.z = -(0 + (z_offset - {{ value['z'] }})/scale);
+    c_textMesh.position.z = -(0 + (z_offset - {{ value['z'] }})/scale); //inversed
     c_textMesh.rotation.x = 0;
     c_textMesh.rotation.y = Math.PI * 2;
 
@@ -256,8 +256,8 @@ function createElements() {
 
     // set contra-line geometry
     c_lineGeo = new THREE.Geometry();   
-    c_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["root"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["root"]]["y"] }})/scale, -(z_offset - {{ cells[link["root"]]["z"] }})/scale ));
-    c_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["dest"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["dest"]]["y"] }})/scale, -(z_offset - {{ cells[link["dest"]]["z"] }})/scale ));
+    c_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["root"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["root"]]["y"] }})/scale, -(z_offset - {{ cells[link["root"]]["z"] }})/scale )); //inversed
+    c_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["dest"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["dest"]]["y"] }})/scale, -(z_offset - {{ cells[link["dest"]]["z"] }})/scale )); //inversed
 
     // create line
     line = new THREE.Line(lineGeo, lmaterial);
@@ -292,8 +292,8 @@ function createElements() {
 
     // set contra-line geometry
     c_lineGeo = new THREE.Geometry();
-    c_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["root"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["root"]]["y"] }})/scale, -(z_offset - {{ cells[link["root"]]["z"] }})/scale ));
-    c_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["dest"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["dest"]]["y"] }})/scale, (z_offset - {{ cells[link["dest"]]["z"] }})/scale ));
+    c_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["root"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["root"]]["y"] }})/scale, -(z_offset - {{ cells[link["root"]]["z"] }})/scale )); //inversed
+    c_lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["dest"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["dest"]]["y"] }})/scale, (z_offset - {{ cells[link["dest"]]["z"] }})/scale )); //inversed
 
     // create line
     line = new THREE.Line(lineGeo, contra_lmaterial);
@@ -328,10 +328,8 @@ function animate() {
 function render() {
   // set text at the front
   for (var key in textMeshes){
-    textMeshes[key].rotation.setFromRotationMatrix( camera.matrix );
-  }
-  for (var key in c_textMeshes){
-    c_textMeshes[key].rotation.setFromRotationMatrix( camera.matrix );
+    textMeshes[key].rotation.setFromRotationMatrix(camera.matrix);
+    c_textMeshes[key].rotation.setFromRotationMatrix(camera.matrix);
   }
 
   //rendering
@@ -342,12 +340,12 @@ function render() {
 
 //--------------- SWITCH HALF ---------------
 function switchHalf(){
-  if (halfVisible){
+  if (isWholeMode){
     hideHalf();
-    halfVisible = false;
+    isWholeMode = false;
   }else{
     showHalf();
-    halfVisible = true;
+    isWholeMode = true;
   }
 }
 
@@ -511,20 +509,20 @@ function clearDetail(){
 
 //Restore world to default
 function restore(){
-  //halfVisible = true;
+  //isWholeMode = true;
   for (var key in sphereMaterials){
     sphereMaterials[key].opacity = 1.0;
     sphereMaterials[key].transparent = false;
     sphereMaterials[key].visible = true;
     c_sphereMaterials[key].opacity = 1.0;
     c_sphereMaterials[key].transparent = false;
-    if (halfVisible){
+    if (isWholeMode){
       c_sphereMaterials[key].visible = true;
     }
   }
   for (var key in textMeshes){
     textMeshes[key].material.visible = true;
-    if (halfVisible){
+    if (isWholeMode){
       c_textMeshes[key].material.visible = true;
     }
   }
@@ -533,7 +531,7 @@ function restore(){
       lineMaterials[key][i].opacity = 0.15;
       lineMaterials[key][i].visible = true;
       c_lineMaterials[key][i].opacity = 0.15;
-      if (halfVisible){
+      if (isWholeMode){
         c_lineMaterials[key][i].visible = true;
       }
     }
@@ -542,7 +540,7 @@ function restore(){
     for (var i=0; i<contra_lineMaterials[key].length; i++){
       contra_lineMaterials[key][i].opacity = 0.15;
       c_contra_lineMaterials[key][i].opacity = 0.15;
-      if (halfVisible){
+      if (isWholeMode){
         contra_lineMaterials[key][i].visible = true;
         c_contra_lineMaterials[key][i].visible = true;
       }

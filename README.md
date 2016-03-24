@@ -6,7 +6,7 @@
 
 Zennoh Viewer provides visually understanding of a brain type cognitive architecture.
 
-##Instruction
+##Getting Started
 
 First, clone this repository.
 

@@ -386,10 +386,6 @@ function showHalf(){
   for (var key in c_sphereMaterials){
     if ((resultNodes.length == 0) || (resultNodes.indexOf(key) >= 0)){
       c_sphereMaterials[key].visible = true;
-    }
-  }
-  for (var key in c_textMeshes){
-    if ((resultNodes.length == 0) || (resultNodes.indexOf(key) >= 0)){
       c_textMeshes[key].material.visible = true;
     }
   }
@@ -509,20 +505,15 @@ function clearDetail(){
 
 //Restore world to default
 function restore(){
-  //isWholeMode = true;
   for (var key in sphereMaterials){
     sphereMaterials[key].opacity = 1.0;
     sphereMaterials[key].transparent = false;
     sphereMaterials[key].visible = true;
     c_sphereMaterials[key].opacity = 1.0;
     c_sphereMaterials[key].transparent = false;
-    if (isWholeMode){
-      c_sphereMaterials[key].visible = true;
-    }
-  }
-  for (var key in textMeshes){
     textMeshes[key].material.visible = true;
     if (isWholeMode){
+      c_sphereMaterials[key].visible = true;
       c_textMeshes[key].material.visible = true;
     }
   }
@@ -572,7 +563,6 @@ function search(form){
             for(var i=0; i<lineMaterials[key].length; i++){
               lineMaterials[key][i].visible = false;
               c_lineMaterials[key][i].visible = false;
-
             }
           }
           if (key in contra_lineMaterials){

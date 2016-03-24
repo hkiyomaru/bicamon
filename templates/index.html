@@ -210,21 +210,21 @@ function createElements() {
     sphereMesh.position.z = 0 + (z_offset - {{ value['z'] }})/scale;
 
     // create contra-node mesh
-    c_sphereMesh = new THREE.Mesh( sphereGeo, c_smaterial );
+    c_sphereMesh = new THREE.Mesh(sphereGeo, c_smaterial);
     c_sphereMesh.position.x = (x_offset - {{ value['x'] }})/scale;
     c_sphereMesh.position.y = hover + (y_offset - {{ value['y'] }})/scale;
     c_sphereMesh.position.z = -(0 + (z_offset - {{ value['z'] }})/scale);  
 
     // create text mesh
     textMesh = new THREE.Mesh( textGeo, tmaterial );
-    textMesh.position.x = centerOffset - radius/2 + (x_offset - {{ value['x'] }})/scale;
+    textMesh.position.x = centerOffset + (x_offset - {{ value['x'] }})/scale;
     textMesh.position.y = hover + radius + (y_offset - {{ value['y'] }})/scale;
     textMesh.position.z = 0 + (z_offset - {{ value['z'] }})/scale;
     textMesh.rotation.x = 0;
     textMesh.rotation.y = Math.PI * 2;
 
     // create contra-text mesh
-    c_textMesh = new THREE.Mesh( textGeo, c_tmaterial );
+    c_textMesh = new THREE.Mesh(textGeo, c_tmaterial);
     c_textMesh.position.x = centerOffset - radius/2 + (x_offset - {{ value['x'] }})/scale;
     c_textMesh.position.y = hover + radius + (y_offset - {{ value['y'] }})/scale;
     c_textMesh.position.z = -(0 + (z_offset - {{ value['z'] }})/scale);
@@ -496,7 +496,7 @@ function deleteDetail(name){
     if (v==name) resultNodes.splice(i, 1);
   });
   if (!($(".result").length)){
-    hideDetail();
+    initializeWorld();
   }
 }
 

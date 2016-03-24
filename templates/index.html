@@ -75,7 +75,7 @@ var contra_lineMaterials = {};
 var c_contra_lineMaterials = {};
 var textMeshes = {};
 var c_textMeshes = {};
-var brightness_count = {};
+var brighting_flags = {};
 var details = {};
 
 //variables about text
@@ -170,7 +170,7 @@ function createElements() {
     details["{{ key }}"] = detail;
 
     // set brightness
-    brightness_count["{{ key }}"] = 0;
+    brighting_flags["{{ key }}"] = false;
 
     // set text material
     tmaterial = new THREE.MeshBasicMaterial({color: 0xcccccc});
@@ -594,9 +594,9 @@ function search(form){
 
 //--------------- ATTENUATION ---------------
 function attenuate(){
-  attenuation_rate = -0.06;
-  for (var key in brightness_count){
-    if (brightness_count[key] != 0){
+  attenuation_rate = -0.20;
+  for (var key in brighting_flags){
+    if (brighting_flags[key]){
       brightness = sphereMaterials[key].color.getHSL()["l"];
       if (brightness > 0.12) {
         sphereMaterials[key].color.offsetHSL(0, 0, brightness * attenuation_rate);
@@ -613,13 +613,8 @@ function attenuate(){
             c_contra_lineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
           }
         }
-      }
-      if (brightness <= 0.12){
-        brightness_count[key] = 0;
-      } else if (brightness < 0.30){
-        brightness_count[key] = 1;
-      } else if (brightness < 0.60){
-        brightness_count[key] = 2;
+      }else{
+        brighting_flags[key] = false;
       }
     }
   }
@@ -636,20 +631,20 @@ var socket = io.connect('http://' + document.domain + ':' + location.port)
 socket.on('activation', function(data){
   for(var i=0; i<data.length; i++){
     name = data[i];
-    if (brightness_count[name] < 3){
-      brightness_count[name]++;
-      sphereMaterials[name].color.offsetHSL(0, 0, 0.3);
-      c_sphereMaterials[name].color.offsetHSL(0, 0, 0.3);
+    if (!brighting_flags[name]){
+      brighting_flags[name] = true;
+      sphereMaterials[name].color.offsetHSL(0, 0, 0.7);
+      c_sphereMaterials[name].color.offsetHSL(0, 0, 0.7);
       if (name in lineMaterials){
         for(var j=0; j<lineMaterials[name].length; j++){
-	  lineMaterials[name][j].color.offsetHSL(0, 0, 0.3);
-	  c_lineMaterials[name][j].color.offsetHSL(0, 0, 0.3);
+	  lineMaterials[name][j].color.offsetHSL(0, 0, 0.7);
+	  c_lineMaterials[name][j].color.offsetHSL(0, 0, 0.7);
         }
       }
       if (name in contra_lineMaterials){
         for(var j=0; j<contra_lineMaterials[name].length; j++){
-	  contra_lineMaterials[name][j].color.offsetHSL(0, 0, 0.3);
-	  c_contra_lineMaterials[name][j].color.offsetHSL(0, 0, 0.3);
+	  contra_lineMaterials[name][j].color.offsetHSL(0, 0, 0.7);
+	  c_contra_lineMaterials[name][j].color.offsetHSL(0, 0, 0.7);
         }
       }
     }

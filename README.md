@@ -4,7 +4,7 @@
 
 ##What is Zennoh Viewer
 
-Zennoh Viewer provides visually understanding of a brain type cognitive architecture.
+Zennoh Viewer provides visually understanding of a brain-inspired cognitive architecture.
 
 ##Getting Started
 

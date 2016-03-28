@@ -18,7 +18,7 @@ You have to install some packages to run this program.
 
 They are written in _requirements.txt_.
 
-```cd inside```, and run the next script.
+```cd inside```, and run the next command.
 
 ```
 $ pip install -r requirements.txt
@@ -28,7 +28,7 @@ You don't have the necessary database file yet.
 
 However, you have the seed to build it.
 
-```cd db```, and run this command.
+```cd db```, and run this.
 
 ```
 $ ./makedb.sh
@@ -64,13 +64,13 @@ $ python post_test.py
 
 ##Combine
 
-Let's combine your brain model.
+Let's combine your brain-inspired cognitive architecture.
 
 The program to call API is in the test direcory.
 
 Then, open _api.py_.
 
-The function named 'send_to_viewer' can send POST request to the viewer.
+The function named 'send_to_viewer' can send POST request to Zennoh Viewer.
 
 Please put this function in the directory in the path.
 

@@ -4,6 +4,7 @@ from flask.ext.socketio import SocketIO, send, emit
 import math
 import random
 import threading
+from multiprocessing import Process
 
 # Global variables
 app = Flask(__name__)
@@ -46,9 +47,9 @@ def query_db(query, args=(), one=False):
 def reset_permission():
     global request_permission
     request_permission = dict(original_request_permission)
-    print "Request-permission restored"
     t = threading.Timer(1.0, reset_permission)
     t.start()
+
 
 # Initialize
 def initialize():
@@ -82,8 +83,6 @@ def initialize():
             if len(root_coordinate) != 0 and len(dest_coordinate) != 0:
                 send_c_links.append(link)
 
-        # Permission
-        reset_permission()
 
 # Routing Functions
 @app.route('/')
@@ -114,6 +113,10 @@ if __name__ == '__main__':
     # Initialize
     initialize()
 
+    # Permission control
+    t = threading.Thread(target=reset_permission)
+    t.start()
+    
     # Run
     app.debug = True
     socketio.run(app)

@@ -8,7 +8,11 @@ Zennoh Viewer provides visually understanding of a brain-inspired cognitive arch
 
 ##Getting Started
 
-First, clone this repository.
+I wrote server-side scripts in Python2.7.6.
+
+So if you have Python3, you should switch the Python-version.
+
+Then, clone this repository.
 
 ```
 $ https://github.com/kiyomaro927/MouseBrainVisualizationOnWeb.git

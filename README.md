@@ -75,3 +75,7 @@ The function named 'send_to_viewer' can send POST request to the viewer.
 Please put this function in the directory in the path.
 
 And, insert the function call in your program.
+
+##LICENSE
+
+MIT license.

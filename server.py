@@ -13,7 +13,6 @@ socketio = SocketIO(app)
 
 DATABASE = 'db/cells.db'
 
-original_request_permission = {}
 request_permission = {}
 
 send_cells = {}
@@ -46,7 +45,8 @@ def query_db(query, args=(), one=False):
 # Request validation
 def reset_permission():
     global request_permission
-    request_permission = dict(original_request_permission)
+    for k in request_permission.keys():
+        request_permission[k] = True
     t = threading.Timer(1.0, reset_permission)
     t.start()
 
@@ -55,7 +55,7 @@ def reset_permission():
 def initialize():
     with app.app_context():
         # Global variables
-        global original_request_permission
+        global request_permission
         global send_cells
         global send_links
         global send_c_links
@@ -68,7 +68,7 @@ def initialize():
         # Set data
         for cellname in cellnames:
             name = cellname["name"]
-            original_request_permission[name] = True
+            request_permission[name] = True
             send_cells[name] = query_db('select fullname,region,voxel,x,y,z from cells where name="%s"' % name)[0]
 
         for link in links:

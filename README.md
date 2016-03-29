@@ -56,7 +56,7 @@ I know the cells you're watching are not firing.
 
 I prepared some test programs in the test directory.
 
-Then, run the test code to fire cells.
+Open new terminal and run the test code to fire cells.
 
 ```
 $ python post_test.py

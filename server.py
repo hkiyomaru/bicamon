@@ -46,6 +46,7 @@ def query_db(query, args=(), one=False):
 def reset_permission():
     global request_permission
     request_permission = dict(original_request_permission)
+    print "Request-permission restored"
     t = threading.Timer(1.0, reset_permission)
     t.start()
 
@@ -99,10 +100,9 @@ def api():
         data_name = []
         for d in data["cells"]:
             name = query_db('select name from cells where name="%s"' % d)
-            if len(name) != 0:
-                if request_permission[name[0]["name"]]:
-                    data_name.append(name[0]["name"])
-                    request_permission[name[0]["name"]] = False
+            if len(name) != 0 and request_permission[name[0]["name"]]:
+                data_name.append(name[0]["name"])
+                request_permission[name[0]["name"]] = False
         if len(data_name) != 0:
             socketio.emit('activation', data_name)
         return "Request was sended.\n"

@@ -49,6 +49,8 @@ def reset_permission():
 # Routing Functions
 @app.route('/')
 def index():
+    global original_request_permission
+
     # Get data from database
     cellnames = query_db('select name from cells')
     links = query_db('select * from links')
@@ -58,7 +60,6 @@ def index():
     send_cells = {}
     send_links = []
     send_c_links = []
-    global original_request_permission
     
     # Set data
     for cellname in cellnames:
@@ -82,6 +83,8 @@ def index():
 
 @app.route('/api', methods=['GET', 'POST'])
 def api():
+    global request_permission
+
     if request.method == 'POST':
         data =  request.json
         data_name = []

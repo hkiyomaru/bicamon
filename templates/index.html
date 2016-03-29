@@ -432,6 +432,52 @@ $("#detailBox").hover(
   }
 );
 
+//Search node
+function search(form){
+  var query = form.query.value;
+  if (query != ""){
+    restore();
+    for (var key in sphereMaterials){
+      if ((key.indexOf(query) != 0) && (resultNodes.indexOf(key) < 0)){ //not start by query
+        sphereMaterials[key].opacity = 0.25;
+        sphereMaterials[key].transparent = true;
+        c_sphereMaterials[key].opacity = 0.25;
+        c_sphereMaterials[key].transparent = true;
+        textMeshes[key].material.visible = false;
+        c_textMeshes[key].material.visible = false;
+        if (key in lineMaterials){
+          for(var i=0; i<lineMaterials[key].length; i++){
+            lineMaterials[key][i].visible = false;
+            c_lineMaterials[key][i].visible = false;
+          }
+        }
+        if (key in contra_lineMaterials){
+          for(var i=0; i<contra_lineMaterials[key].length; i++){
+            contra_lineMaterials[key][i].visible = false;
+            c_contra_lineMaterials[key][i].visible = false;
+          }
+        }
+      }else{
+        addDetail(key, details[key]["fullname"], details[key]["region"]);
+        showDetail();
+        if (key in lineMaterials){
+          for(var i=0; i<lineMaterials[key].length; i++){
+            lineMaterials[key][i].opacity = 1.0;
+            c_lineMaterials[key][i].opacity = 1.0;
+          }
+        }
+        if (key in contra_lineMaterials){
+          for(var i=0; i<contra_lineMaterials[key].length; i++){
+            contra_lineMaterials[key][i].opacity = 1.0;
+            c_contra_lineMaterials[key][i].opacity = 1.0;
+          }
+        }
+      }
+    }
+  }
+}
+
+
 //Add detail information to detailbox
 function addDetail(name, fullname, region){
   if (!(($("[name=" + name +"]").length))){
@@ -491,8 +537,8 @@ function deleteDetail(name){
   });
   if (!($(".result").length)){
     initializeWorld();
-    controls.enabled = true;
   }
+  controls.enabled = true;
 }
 
 //Clear detail
@@ -544,53 +590,6 @@ function restore(){
 function initializeWorld(){
   clearDetail();
   restore();
-}
-
-//Search node
-function search(form){
-  var query = form.query.value;
-  if (query != ""){
-    restore();
-    for (var key in sphereMaterials){
-      if (key.indexOf(query) != 0){ //not start by query
-        if (resultNodes.indexOf(key) < 0){
-          sphereMaterials[key].opacity = 0.25;
-          sphereMaterials[key].transparent = true;
-          c_sphereMaterials[key].opacity = 0.25;
-          c_sphereMaterials[key].transparent = true;
-          textMeshes[key].material.visible = false;
-          c_textMeshes[key].material.visible = false;
-          if (key in lineMaterials){
-            for(var i=0; i<lineMaterials[key].length; i++){
-              lineMaterials[key][i].visible = false;
-              c_lineMaterials[key][i].visible = false;
-            }
-          }
-          if (key in contra_lineMaterials){
-            for(var i=0; i<contra_lineMaterials[key].length; i++){
-              contra_lineMaterials[key][i].visible = false;
-              c_contra_lineMaterials[key][i].visible = false;
-            }
-          }
-        }
-      }else{
-        addDetail(key, details[key]["fullname"], details[key]["region"]);
-        showDetail();
-        if (key in lineMaterials){
-          for(var i=0; i<lineMaterials[key].length; i++){
-            lineMaterials[key][i].opacity = 1.0;
-            c_lineMaterials[key][i].opacity = 1.0;
-          }
-        }
-        if (key in contra_lineMaterials){
-          for(var i=0; i<contra_lineMaterials[key].length; i++){
-            contra_lineMaterials[key][i].opacity = 1.0;
-            c_contra_lineMaterials[key][i].opacity = 1.0;
-          }
-        }
-      }
-    }
-  }
 }
 
 //--------------- ATTENUATION ---------------

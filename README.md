@@ -15,7 +15,7 @@ So if you have Python3, you should switch the Python-version.
 Then, clone this repository.
 
 ```
-$ https://github.com/kiyomaro927/MouseBrainVisualizationOnWeb.git
+$ git clone https://github.com/kiyomaro927/ZennohViewer.git
 ```
 
 You have to install some packages to run this program.

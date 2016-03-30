@@ -121,11 +121,10 @@ def api():
     if request.method == 'POST':
         data =  request.json
         data_name = []
-        for d in data["cells"]:
-            name = query_db('select name from cells where name="%s"' % d)
-            if len(name) != 0 and request_permission[name[0]["name"]]:
-                data_name.append(name[0]["name"])
-                request_permission[name[0]["name"]] = False
+        name = query_db('select name from cells where name="%s"' % data["cells"][0])
+        if len(name) != 0 and request_permission[name[0]["name"]]:
+            data_name.append(name[0]["name"])
+            request_permission[name[0]["name"]] = False
         if len(data_name) != 0:
             socketio.emit('activation', data_name)
         return "Request was sended.\n"

@@ -31,7 +31,10 @@ SOFTWARE.
 <script>
 //--------------- WEBGL ---------------
 
-if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+if ( ! Detector.webgl ){
+  $("#toolBox").css("visibility", "hidden");
+  Detector.addGetWebGLMessage();
+}
 
 var colorList = {};
 colorList["Cerebellar Cortex"] = function(){
@@ -82,10 +85,9 @@ var z_offset = 5407;
 //basic variables
 var controls;
 var camera, cameraTarget, scene, renderer;
-var group;
 
 //scale config
-var scale = 2.5;
+var scale = 2.0;
 
 //additional line switch
 var isWholeMode = true;
@@ -129,7 +131,7 @@ startAttenuation();
 function init() {
   // set camera
   camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-  camera.position.set(4800, 2000, 0);
+  camera.position.set(6000, 3000, 0);
   cameraTarget = new THREE.Vector3(0, 0, 0);
   camera.lookAt(cameraTarget);
 
@@ -140,10 +142,6 @@ function init() {
   // set light
   var ambient = new THREE.AmbientLight(0xffffff);
   scene.add(ambient);
-
-  // set rendering target
-  group = new THREE.Group();
-  scene.add(group);
 
   // loading
   loadWorld();
@@ -157,7 +155,7 @@ function init() {
 
   // set orbitcontrols
   controls = new THREE.OrbitControls(camera);
-  controls.maxDistance = 10000;
+  controls.maxDistance = 9000;
   controls.minDistance = 0;
 
   // add event listener
@@ -261,11 +259,11 @@ function createElements() {
     textMeshes["{{ key }}"] = textMesh;
     c_textMeshes["{{ key }}"] = c_textMesh;
 
-    // add to group
-    group.add(sphereMesh);
-    group.add(c_sphereMesh);
-    group.add(textMesh);
-    group.add(c_textMesh);
+    // add to scene
+    scene.add(sphereMesh);
+    scene.add(c_sphereMesh);
+    scene.add(textMesh);
+    scene.add(c_textMesh);
   {% endfor %}
 
   {% for link in links %}
@@ -299,9 +297,9 @@ function createElements() {
     }
     c_lineMaterials["{{ link['root'] }}"].push(c_lmaterial);
 
-    // add to group
-    group.add(line);
-    group.add(c_line);
+    // add to scene
+    scene.add(line);
+    scene.add(c_line);
   {% endfor %}
 
   {% for link in c_links %}
@@ -335,9 +333,9 @@ function createElements() {
     }
     c_contra_lineMaterials["{{ link['root'] }}"].push(c_contra_lmaterial);
     
-    // add to group
-    group.add(line);
-    group.add(c_line);
+    // add to scene
+    scene.add(line);
+    scene.add(c_line);
   {% endfor %}
 }
 
@@ -439,7 +437,7 @@ function switchDetail(){
 
 //--------------- SEARCH ---------------
 // invalidate orbotcontrols on toolbox
-$(".toolBox").hover(
+$("#toolBox").hover(
   function(){
     controls.enabled = false;
   },
@@ -654,23 +652,21 @@ function startAttenuation(){
 var brighting_point = 0.7;
 var socket = io.connect('http://' + document.domain + ':' + location.port)
 socket.on('activation', function(data){
-  for(var i=0; i<data.length; i++){
-    name = data[i];
-    if (!brighting_flags[name]){
-      brighting_flags[name] = true;
-      sphereMaterials[name].color.offsetHSL(0, 0, brighting_point);
-      c_sphereMaterials[name].color.offsetHSL(0, 0, brighting_point);
-      if (name in lineMaterials){
-        for(var j=0; j<lineMaterials[name].length; j++){
-	  lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
-	  c_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
-        }
+  name = data[0];
+  if (!brighting_flags[name]){
+    brighting_flags[name] = true;
+    sphereMaterials[name].color.offsetHSL(0, 0, brighting_point);
+    c_sphereMaterials[name].color.offsetHSL(0, 0, brighting_point);
+    if (name in lineMaterials){
+      for(var j=0; j<lineMaterials[name].length; j++){
+        lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
+        c_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
       }
-      if (name in contra_lineMaterials){
-        for(var j=0; j<contra_lineMaterials[name].length; j++){
-	  contra_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
-	  c_contra_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
-        }
+    }
+    if (name in contra_lineMaterials){
+      for(var j=0; j<contra_lineMaterials[name].length; j++){
+        contra_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
+        c_contra_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
       }
     }
   }

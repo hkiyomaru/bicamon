@@ -1,10 +1,12 @@
-#Zennoh Viewer
+#BiCAmon
 
 ![screenshot](https://raw.github.com/wiki/kiyomaro927/MouseBrainVisualizationOnWeb/images/screen_shot.png)
 
-##What is Zennoh Viewer
+##What is BiCAmon
 
-Zennoh Viewer provides visually understanding of a brain-inspired cognitive architecture.
+BiCAmon is an abbreviation for "Biology inspired cognitive architecture monitor".
+
+This provides visually understanding of a brain-inspired cognitive architecture.
 
 ##Getting Started
 
@@ -15,7 +17,7 @@ So if you have Python3, you should switch the Python-version.
 Then, clone this repository.
 
 ```
-$ git clone https://github.com/kiyomaro927/ZennohViewer.git
+$ git clone https://github.com/kiyomaro927/bicamon.git
 ```
 
 You have to install some packages to run this program.
@@ -74,7 +76,7 @@ The program to call API is in the test direcory.
 
 Then, open _api.py_.
 
-The function named 'send_to_viewer' can send POST request to Zennoh Viewer.
+The function named 'send_to_viewer' can send POST request to BiCAmon.
 
 Please put this function in the directory in the path.
 

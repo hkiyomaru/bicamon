@@ -32,7 +32,7 @@ from multiprocessing import Process
 
 # Global variables
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'mouse-brain-visualization'
+app.config['SECRET_KEY'] = 'bicamon'
 socketio = SocketIO(app)
 
 DATABASE = 'db/cells.db'

@@ -122,7 +122,7 @@ var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
 //variables about search
-var resultNodes = []
+var resultNodes = [];
 
 //main function call
 init();
@@ -270,8 +270,8 @@ function createElements() {
 
   {% for link in links %}
     // set line material
-    lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
-    c_lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
+    lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*5 });
+    c_lmaterial = new THREE.LineBasicMaterial({ color: lmaterial.color, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*5 });
 
     // save color
     if (!("{{ link['root'] }}" in lineColors)){
@@ -314,8 +314,8 @@ function createElements() {
 
   {% for link in c_links %}
     // set line material
-    contra_lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
-    c_contra_lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
+    contra_lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*5 });
+    c_contra_lmaterial = new THREE.LineBasicMaterial({ color: contra_lmaterial.color, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*5 });
 
     // save color
     if (!("{{ link['root'] }}" in lineColors)){

@@ -95,7 +95,9 @@ var isWholeMode = true;
 //element lists
 var sphereMaterials = {};
 var c_sphereMaterials = {};
+
 var lineMaterials = {};
+var lineColors = {}
 var c_lineMaterials = {};
 var contra_lineMaterials = {};
 var c_contra_lineMaterials = {};
@@ -271,6 +273,14 @@ function createElements() {
     lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
     c_lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
 
+    // save color
+    if (!("{{ link['root'] }}" in lineColors)){
+      lineColors["{{ link['root'] }}"] = lmaterial.color;
+    }else{
+      lmaterial.color = lineColors["{{ link['root'] }}"];
+      c_lmaterial.color = lineColors["{{ link['root'] }}"];
+    }
+
     // set line geometry
     lineGeo = new THREE.Geometry();   
     lineGeo.vertices.push(new THREE.Vector3((x_offset - {{ cells[link["root"]]["x"] }})/scale - (scale * 3), (y_offset - {{ cells[link["root"]]["y"] }})/scale, (z_offset - {{ cells[link["root"]]["z"] }})/scale ));
@@ -306,6 +316,14 @@ function createElements() {
     // set line material
     contra_lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
     c_contra_lmaterial = new THREE.LineBasicMaterial({ color: 0x003D00, opacity: 0.15, transparent: true, linewidth: {{ link["weight"] }}*10 });
+
+    // save color
+    if (!("{{ link['root'] }}" in lineColors)){
+      lineColors["{{ link['root'] }}"] = contra_lmaterial.color;
+    }else{
+      contra_lmaterial.color = lineColors["{{ link['root'] }}"];
+      c_contra_lmaterial.color = lineColors["{{ link['root'] }}"];
+    }
 
     // set line geometry
     lineGeo = new THREE.Geometry();
@@ -623,17 +641,8 @@ function attenuate(){
       if (brightness > 0.12) {
         sphereMaterials[key].color.offsetHSL(0, 0, brightness * attenuation_rate);
         c_sphereMaterials[key].color.offsetHSL(0, 0, brightness * attenuation_rate);
-        if (key in lineMaterials){
-          for(var i=0; i<lineMaterials[key].length; i++){
-            lineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
-            c_lineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
-          }
-        }
-        if (key in contra_lineMaterials){
-          for(var i=0; i<contra_lineMaterials[key].length; i++){
-            contra_lineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
-            c_contra_lineMaterials[key][i].color.offsetHSL(0, 0, brightness * attenuation_rate);
-          }
+        if (key in lineColors){
+          lineColors[key].offsetHSL(0, 0, brightness * attenuation_rate);
         }
       }else{
         brighting_flags[key] = false;
@@ -657,17 +666,8 @@ socket.on('activation', function(data){
     brighting_flags[name] = true;
     sphereMaterials[name].color.offsetHSL(0, 0, brighting_point);
     c_sphereMaterials[name].color.offsetHSL(0, 0, brighting_point);
-    if (name in lineMaterials){
-      for(var j=0; j<lineMaterials[name].length; j++){
-        lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
-        c_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
-      }
-    }
-    if (name in contra_lineMaterials){
-      for(var j=0; j<contra_lineMaterials[name].length; j++){
-        contra_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
-        c_contra_lineMaterials[name][j].color.offsetHSL(0, 0, brighting_point);
-      }
+    if (name in lineColors){
+      lineColors[name].offsetHSL(0, 0, brighting_point);
     }
   }
 });

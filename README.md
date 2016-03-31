@@ -84,4 +84,8 @@ And, insert the function call in your program.
 
 ##LICENSE
 
-MIT license.
+* Files other than third party's.
+ - Revised BSD License
+
+* Third party's files.
+ - Follow the license written in the files.

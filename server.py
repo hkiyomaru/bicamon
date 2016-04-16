@@ -4,7 +4,6 @@ from flask.ext.socketio import SocketIO, send, emit
 import math
 import random
 import threading
-from multiprocessing import Process
 
 # Global variables
 app = Flask(__name__)

@@ -1,8 +1,15 @@
 #!/bin/sh
 
 if [ -e cells.db ]; then
-  echo "table cells already exists"
-else
-  ./scripts/createTable.py
-  ./scripts/insert.py
+	echo "Removing the existing database..."
+	rm cells.db
+	echo "Completed."
 fi
+
+echo "Creating database tables..."
+./scripts/createTable.py
+echo "Completed."
+
+echo "Inserting data..."
+./scripts/insert.py
+echo "Completed."

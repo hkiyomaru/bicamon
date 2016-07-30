@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
+echo "Build database..."
+pushd ./db/
 
 if [ -e cells.db ]; then
 	echo "Removing the existing database..."
@@ -13,3 +16,5 @@ echo "Completed."
 echo "Inserting data..."
 ./scripts/insert.py
 echo "Completed."
+
+popd

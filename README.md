@@ -30,16 +30,6 @@ They are written in _requirements.txt_.
 $ pip install -r requirements.txt
 ```
 
-You don't have the necessary database file yet.
-
-However, you have the seed to build it.
-
-```cd db```, and run this.
-
-```
-$ ./makedb.sh
-```
-
 ##Run
 
 Then, run the program.

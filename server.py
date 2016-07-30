@@ -3,6 +3,7 @@ from flask import Flask, render_template, g, request
 from flask.ext.socketio import SocketIO, send, emit
 import math
 import random
+import commands
 import threading
 
 # Global variables
@@ -59,6 +60,9 @@ def initialize():
         global send_links
         global send_c_links
 
+        # Build database
+        check = commands.getoutput("./db/makedb.sh")
+
         # Get data from database
         cellnames = query_db('select name from cells')
         links = query_db('select * from links')
@@ -81,7 +85,6 @@ def initialize():
             dest_coordinate = query_db('select * from cells where name="%s"' % link["dest"])
             if len(root_coordinate) != 0 and len(dest_coordinate) != 0:
                 send_c_links.append(link)
-
 
 # Routing Functions
 @app.route('/')
@@ -116,5 +119,4 @@ if __name__ == '__main__':
     t.start()
     
     # Run
-    app.debug = True
     socketio.run(app)

@@ -1,10 +1,11 @@
 import sqlite3
 from flask import Flask, render_template, g, request
 from flask.ext.socketio import SocketIO, send, emit
-import math
-import random
+
 import commands
 import threading
+
+import argparse
 
 # Global variables
 app = Flask(__name__)
@@ -18,6 +19,13 @@ request_permission = {}
 send_cells = {}
 send_links = []
 send_c_links = []
+
+
+# Parse command line argument
+parser = argparse.ArgumentParser()
+parser.add_argument('--no-db-build', dest='no_build_db', action='store_true', help='skip db-build process')
+parser.add_argument('--light-mode', dest='light_mode', action='store_false', help='reduce links to draw')
+args = parser.parse_args()
 
 # Database Functions
 def get_db():
@@ -61,7 +69,10 @@ def initialize():
         global send_c_links
 
         # Build database
-        check = commands.getoutput("./db/makedb.sh")
+        if args.no_build_db:
+            pass
+        else:
+            check = commands.getoutput("./db/makedb.sh")
 
         # Get data from database
         cellnames = query_db('select name from cells')
@@ -78,7 +89,9 @@ def initialize():
             root_coordinate = query_db('select * from cells where name="%s"' % link["root"])
             dest_coordinate = query_db('select * from cells where name="%s"' % link["dest"])
             if len(root_coordinate) != 0 and len(dest_coordinate) != 0:
-                send_links.append(link)
+                if args.light_mode and link['weight'] < 0.001:
+                    valid += 1
+                    send_links.append(link)
 
         for link in contra_links:
             root_coordinate = query_db('select * from cells where name="%s"' % link["root"])

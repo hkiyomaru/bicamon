@@ -14,7 +14,7 @@ socketio = SocketIO(app)
 
 DATABASE = 'db/cells.db'
 
-request_permission = {}
+request_permission = []
 
 send_cells = {}
 send_links = []
@@ -24,7 +24,7 @@ send_c_links = []
 # Parse command line argument
 parser = argparse.ArgumentParser()
 parser.add_argument('--no-db-build', dest='no_build_db', action='store_true', help='skip db-build process')
-parser.add_argument('--light-mode', dest='light_mode', action='store_false', help='reduce links to draw')
+parser.add_argument('--light-mode', dest='light_mode', action='store_true', help='reduce links to draw')
 args = parser.parse_args()
 
 # Database Functions
@@ -53,8 +53,7 @@ def query_db(query, args=(), one=False):
 # Request validation
 def reset_permission():
     global request_permission
-    for k in request_permission.keys():
-        request_permission[k] = True
+    request_permission = []
     t = threading.Timer(1.0, reset_permission)
     t.start()
 
@@ -82,23 +81,28 @@ def initialize():
         # Set data
         for cellname in cellnames:
             name = cellname["name"]
-            request_permission[name] = True
             send_cells[name] = query_db('select fullname,region,voxel,x,y,z from cells where name="%s"' % name)[0]
 
         for link in links:
             root_coordinate = query_db('select * from cells where name="%s"' % link["root"])
             dest_coordinate = query_db('select * from cells where name="%s"' % link["dest"])
             if len(root_coordinate) != 0 and len(dest_coordinate) != 0:
-                if args.light_mode and link['weight'] < 0.001:
-                    valid += 1
+                if args.light_mode:
+                    if link['weight'] > 0.1:
+                        send_links.append(link)
+                else:
                     send_links.append(link)
 
         for link in contra_links:
             root_coordinate = query_db('select * from cells where name="%s"' % link["root"])
             dest_coordinate = query_db('select * from cells where name="%s"' % link["dest"])
             if len(root_coordinate) != 0 and len(dest_coordinate) != 0:
-                send_c_links.append(link)
-
+                if args.light_mode:
+                    if link['weight'] > 0.1:
+                        send_c_links.append(link)
+                else:
+                    send_c_links.append(link)
+                
 # Routing Functions
 @app.route('/')
 def index():
@@ -113,9 +117,9 @@ def api():
         data =  request.json
         data_name = []
         name = query_db('select name from cells where name="%s"' % data["cells"][0])
-        if len(name) != 0 and request_permission[name[0]["name"]]:
+        if len(name) != 0 and not name[0]["name"] in request_permission:
             data_name.append(name[0]["name"])
-            request_permission[name[0]["name"]] = False
+            request_permission.append(name[0]["name"])
         if len(data_name) != 0:
             socketio.emit('activation', data_name)
         return "Request was sended.\n"
@@ -131,5 +135,5 @@ if __name__ == '__main__':
     t = threading.Thread(target=reset_permission)
     t.start()
     
-    # Run
+    # Run    
     socketio.run(app)

@@ -11,5 +11,5 @@ def send_to_viewer(fired_module):
 
 # test code
 if __name__ == '__main__':
-    fired_module = "CA1"
-    send_to_viewer(fired_module)
+    module_name = "CA1"
+    send_to_viewer(module_name)

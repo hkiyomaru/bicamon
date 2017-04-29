@@ -1,78 +1,67 @@
-#BiCAmon
+# BiCAmon
 
 ![screenshot](https://raw.github.com/wiki/kiyomaro927/MouseBrainVisualizationOnWeb/images/screen_shot.png)
 
-##What is BiCAmon
+## What is BiCAmon
 
 BiCAmon is an abbreviation for "Biology inspired cognitive architecture monitor".
 
 This provides visually understanding of a brain-inspired cognitive architecture.
 
-##Getting Started
+## Getting Started
 
-I wrote server-side scripts in Python2.7.6.
-
-So if you have Python3, you should switch the Python-version.
-
+Server-side scripts are written in Python2.7.6.
 Then, clone this repository.
 
 ```
 $ git clone https://github.com/kiyomaro927/bicamon.git
 ```
 
-You have to install some packages to run this program.
+You have to install some packages to start BiCAmon.
+They are written in `requirements.txt`.
 
-They are written in _requirements.txt_.
-
-```cd inside```, and run the next command.
+`cd inside`, and run the following command.
 
 ```
 $ pip install -r requirements.txt
 ```
 
-##Run
+## Run
 
-Then, run the program.
+Then, run the program below.
 
 ```
 $ python server.py
 ```
 
-Open your browser, and access _localhost:5000_.
+Open your browser, and access `localhost:5000`.
 
-If you cannot show the page well,
+If you can not show the page well, your browser may not support WebGL.
+For more information, please access [caniuse.com](http://caniuse.com/#search=webgl).
 
-maybe your browser doesn't support WebGL.
+## Test
 
-For more information, please access [this page](http://caniuse.com/#search=webgl)(caniuse.com).
-
-##Test
-
-I know the cells you're watching are not firing.
+I know the cells in your browser are not flashing.
 
 I prepared some test programs in the test directory.
-
-Open new terminal and run the test code to fire cells.
+Open new terminal and run the test code to flash cells.
 
 ```
 $ python post_test.py
 ```
 
-##Combine
+## Combine
 
-Let's combine your brain-inspired cognitive architecture.
+Let's combine your brain-inspired cognitive architecture with BiCAmon.
 
 The program to call API is in the test direcory.
-
-Then, open _api.py_.
+Then, open `api.py`.
 
 The function named 'send_to_viewer' can send POST request to BiCAmon.
-
 Please put this function in the directory in the path.
-
 And, insert the function call in your program.
 
-##LICENSE
+## LICENSE
 
 * Files other than third party's.
  - Revised BSD License

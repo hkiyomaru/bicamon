@@ -4,14 +4,18 @@
 
 ## What is BiCAmon
 
-BiCAmon is an abbreviation for "Biology inspired cognitive architecture monitor".
+BiCAmon is an abbreviation for "biologically-inspired cognitive architecture monitor".
 
-This provides visually understanding of a brain-inspired cognitive architecture.
+This provides visually understanding of a brain-inspired cognitive architecture via web browsers.
+
+## Development environment
+
+* Python 2.7.6
+* Google Chrome 58.0 (64-bit)
 
 ## Getting Started
 
-Server-side scripts are written in Python2.7.6.
-Then, clone this repository.
+First, clone this repository.
 
 ```
 $ git clone https://github.com/kiyomaro927/bicamon.git
@@ -20,7 +24,7 @@ $ git clone https://github.com/kiyomaro927/bicamon.git
 You have to install some packages to start BiCAmon.
 They are written in `requirements.txt`.
 
-`cd inside`, and run the following command.
+`cd bicamon`, and run the following command.
 
 ```
 $ pip install -r requirements.txt
@@ -36,15 +40,15 @@ $ python server.py
 
 Open your browser, and access `localhost:5000`.
 
-If you can not show the page well, your browser may not support WebGL.
-For more information, please access [caniuse.com](http://caniuse.com/#search=webgl).
+If you can not show the page well, your browser may not support __WebGL__.
+For more information, please check [caniuse.com](http://caniuse.com/#search=webgl).
 
 ## Test
 
-I know the cells in your browser are not flashing.
+I know the cells in your browser are not firing.
 
 I prepared some test programs in the test directory.
-Open new terminal and run the test code to flash cells.
+Open new terminal and run the test script to fire cells.
 
 ```
 $ python post_test.py
@@ -55,11 +59,10 @@ $ python post_test.py
 Let's combine your brain-inspired cognitive architecture with BiCAmon.
 
 The program to call API is in the test direcory.
-Then, open `api.py`.
-
+Open `api.py`.
 The function named 'send_to_viewer' can send POST request to BiCAmon.
 Please put this function in the directory in the path.
-And, insert the function call in your program.
+Finally, insert the function call in your program and launch the architecture.
 
 ## LICENSE
 

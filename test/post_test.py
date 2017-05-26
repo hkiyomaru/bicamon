@@ -1,10 +1,12 @@
 import json
 import urllib2
+import time
 from api import send_to_viewer
 
 # test code
 if __name__ == '__main__':
     for i in range(5000):
+        time.sleep(1)
         send_to_viewer("CA1")
         send_to_viewer("CS")
         send_to_viewer("CA3")

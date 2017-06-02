@@ -1,9 +1,7 @@
-import json
-import urllib2
+"""A test script of sending request to BiCAmon server."""
 import time
 from api import send_to_viewer
 
-# test code
 if __name__ == '__main__':
     for i in range(5000):
         time.sleep(1)
@@ -37,4 +35,3 @@ if __name__ == '__main__':
         send_to_viewer("RSPd")
         send_to_viewer("PAG")
         send_to_viewer("NLL")
-    

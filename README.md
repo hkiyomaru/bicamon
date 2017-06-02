@@ -43,6 +43,13 @@ Open your browser, and access `localhost:5000`.
 If you can not show the page well, your browser may not support __WebGL__.
 For more information, please check [caniuse.com](http://caniuse.com/#search=webgl).
 
+Also, `server.py` provides `light-mode` that decreases a number of links drawn.
+It should help you when you run BiCAmon on a laptop computer.
+
+```
+$ python server.py --light
+```
+
 ## Test
 
 I know the cells in your browser are not firing.

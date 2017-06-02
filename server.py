@@ -9,7 +9,7 @@ from flask.ext.socketio import SocketIO
 
 # parse command line argument
 parser = argparse.ArgumentParser()
-parser.add_argument('--light-mode', dest='light_mode', action='store_true',
+parser.add_argument('--light', dest='light', action='store_true',
                     help='reduce links to draw')
 args = parser.parse_args()
 
@@ -62,7 +62,7 @@ def initialize():
 
         for index, link in links.iterrows():
             if link['root'] in list(cells['name']) and link['dest'] in list(cells['name']):
-                if args.light_mode:
+                if args.light:
                     if link['weight'] > 0.1:
                         send_links.append(dict(link))
                 else:
@@ -70,7 +70,7 @@ def initialize():
 
         for index, link in contra_links.iterrows():
             if link['root'] in list(cells['name']) and link['dest'] in list(cells['name']):
-                if args.light_mode:
+                if args.light:
                     if link['weight'] > 0.1:
                         send_c_links.append(dict(link))
                 else:
